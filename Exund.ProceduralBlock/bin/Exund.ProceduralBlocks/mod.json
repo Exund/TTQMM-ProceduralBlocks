@@ -1,0 +1,9 @@
+﻿{
+  "Id": "exund.proceduralblocks",
+  "DisplayName": "Procedural Blocks",
+  "Author": "Exund",
+  "Version": "1.0.0",
+  "Enable": true,
+  "AssemblyName": "Exund.ProceduralBlocks.dll",
+  "EntryMethod": "Exund.ProceduralBlocks.ProceduralBlocksMod.Load"
+}
