@@ -9,6 +9,7 @@ namespace Exund.ProceduralBlocks
 {
     public class ModuleProcedural : Module
     {
+        protected bool deserializing = false;
         protected List<IntVector3> cells = new List<IntVector3> { IntVector3.zero };
         protected List<Vector3> aps = new List<Vector3>();
         protected IntVector3 size = IntVector3.one;
@@ -18,19 +19,42 @@ namespace Exund.ProceduralBlocks
         protected static PropertyInfo ConnectedBlocksByAP;
         protected static FieldInfo m_BlockCellBounds;
         protected static MethodInfo CalculateDefaultPhysicsConstants;
+        protected static FieldInfo s_BlockSerializationBuffer;
+        protected static FieldInfo bufferLength;
+        protected static MethodInfo GetValue;
+
+        protected static FieldInfo SpawnContext_block;
+        protected static FieldInfo SpawnContext_blockSpec;
 
         static ModuleProcedural()
         {
             ConnectedBlocksByAP = typeof(TankBlock).GetProperty("ConnectedBlocksByAP");
             m_BlockCellBounds = typeof(TankBlock).GetField("m_BlockCellBounds", BindingFlags.Instance | BindingFlags.NonPublic);//.First(f => f.Name.Contains("m_BlockCellBounds"));
             CalculateDefaultPhysicsConstants = typeof(TankBlock).GetMethod("CalculateDefaultPhysicsConstants", BindingFlags.Instance | BindingFlags.NonPublic);
+            s_BlockSerializationBuffer = typeof(ManSpawn).GetField("s_BlockSerializationBuffer", BindingFlags.NonPublic | BindingFlags.Static);
+            var t = s_BlockSerializationBuffer.FieldType;
+            bufferLength = t.GetField("Length", BindingFlags.Public | BindingFlags.Instance);
+            GetValue = t.GetMethod("GetValue", new Type[] { typeof(int) });
+
+            t = typeof(ManSpawn).GetNestedType("SpawnContext", BindingFlags.NonPublic);
+            SpawnContext_block = t.GetField("block");
+            SpawnContext_blockSpec = t.GetField("blockSpec");
         }
 
         public List<IntVector3> Cells
         {
-            get => cells;
+            get
+            {
+                var c = new List<IntVector3>();
+                foreach (var cell in cells)
+                {
+                    c.Add(new IntVector3(cell.x, cell.y, cell.z));
+                }
+                return c;
+            }
             set
             {
+                if (base.block.IsAttached && !this.deserializing) return;
                 cells = value;
                 base.block.filledCells = cells.ToArray();
                 base.block.filledCellFlags = new byte[cells.Count];
@@ -52,20 +76,44 @@ namespace Exund.ProceduralBlocks
         }
         public List<Vector3> APs
         {
-            get => aps;
+            get
+            {
+                var a = new List<Vector3>();
+                foreach (var ap in aps)
+                {
+                    a.Add(new Vector3(ap.x, ap.y, ap.z));
+                }
+                return a;
+            }
             set
             {
+                if (base.block.IsAttached && !this.deserializing) return;
                 aps = value;
                 base.block.attachPoints = aps.ToArray();
-                ConnectedBlocksByAP.SetValue(base.block, new TankBlock[aps.Count], null);
+                var connectedBlocks = base.block.ConnectedBlocksByAP;
+                var newBlocks = new TankBlock[aps.Count];
+                /*if(base.block.tank)
+                {
+                    var blockman = base.block.tank.blockman;
+                    foreach (var ap in aps)
+                    {
+                       
+                    }
+                }*/
+                
+                ConnectedBlocksByAP.SetValue(base.block, newBlocks, null);
             }
         }
 
         public IntVector3 Size
         {
-            get => size;
+            get
+            {
+                return new IntVector3(size);
+            }
             set
             {
+                //Console.WriteLine(deserializing);
                 if (value == size) return;
                 if (value.x < 1) value.x = 1;
                 if (value.y < 1) value.y = 1;
@@ -73,7 +121,47 @@ namespace Exund.ProceduralBlocks
                 size = value;
                 GenerateCellsAPs();
                 GenerateMesh();
+                GenerateProperties();
+                Cells = cells;
+                APs = aps;
             }
+        }
+
+        public ModuleProcedural()
+        {
+            /*Console.WriteLine("Procedural .ctor");
+            //object serializationBuffer = s_BlockSerializationBuffer.GetValue(null);
+            var serializationBuffer = (Array)s_BlockSerializationBuffer.GetValue(null); 
+            try
+            {
+                //Console.WriteLine(serializationBuffer.GetType().Name);
+                Console.WriteLine(serializationBuffer.GetType().Name);
+                for (int i = 0; i < serializationBuffer.Length; i++)
+                {
+                    object sblock = serializationBuffer.GetValue(i);
+                    Console.WriteLine(sblock.GetType().Name);
+                    var block = (TankBlock)SpawnContext_block.GetValue(sblock);
+                    var blockSpec = (TankPreset.BlockSpec)SpawnContext_blockSpec.GetValue(sblock);
+                    var data = Module.SerialData<ModuleProcedural.SerialData>.Retrieve(blockSpec.saveState);
+
+                    Console.WriteLine(base.block == block);
+                    Console.WriteLine(block.name);
+                    Console.WriteLine(data.size.ToString());
+                }
+            } 
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            /*foreach (var i in serializationBuffer)
+            {
+                Console.WriteLine(i.GetType().Name);
+            }*/
+        }
+
+        public void BeforeBlockAdded()
+        {
+
         }
 
         protected virtual void GenerateCellsAPs()
@@ -114,7 +202,7 @@ namespace Exund.ProceduralBlocks
                         }                      
                     }
                 }
-            }       
+            }
         }
 
         protected virtual void GenerateMesh()
@@ -144,14 +232,40 @@ namespace Exund.ProceduralBlocks
             CalculateDefaultPhysicsConstants.Invoke(base.block, null);
         }
 
-        public void Update()
+        protected virtual void GenerateProperties()
         {
-            if (this.Cells.ToArray() != base.block.filledCells) this.Cells = this.cells;
-            if (this.APs.ToArray() != base.block.attachPoints) this.APs = this.aps;
-        }
+            base.block.ChangeMass(base.block.m_DefaultMass * this.size.x * this.size.y * this.size.z);
+        }   
 
         private void OnSpawn()
         {
+            Console.WriteLine("Procedural Spawn");
+            //Console.WriteLine(base.block.IsAttached);
+
+            var serializationBuffer = (Array)s_BlockSerializationBuffer.GetValue(null);
+            try
+            {
+                for (int i = 0; i < serializationBuffer.Length; i++)
+                {
+                    object sblock = serializationBuffer.GetValue(i);
+                    var oblock = (TankBlock)SpawnContext_block.GetValue(sblock);
+                    var blockSpec = (TankPreset.BlockSpec)SpawnContext_blockSpec.GetValue(sblock);
+                    Console.WriteLine(blockSpec.position.ToString());
+                    var data = Module.SerialData<ModuleProcedural.SerialData>.Retrieve(blockSpec.saveState);
+                    Console.WriteLine(data.size.ToString() + " " + data.position.ToString());
+
+                    Console.WriteLine(oblock.name);
+                    if(base.block == oblock)
+                    {
+                        this.Size = data.size;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
             this.Cells = base.block.filledCells.ToList();
             this.APs = base.block.attachPoints.ToList();
             this.Size = this.size;
@@ -159,28 +273,59 @@ namespace Exund.ProceduralBlocks
 
         private void OnPool()
         {
+            //base.block.AttachEvent += this.OnAttach;
+            //base.block.DetachEvent += this.OnDetach;
             base.block.serializeEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
             base.block.serializeTextEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
+        }
+
+        private void OnDetach()
+        {
+            Console.WriteLine("\nProceduralBlock detached");
+            Console.WriteLine(base.block.NumConnectedAPs + " " + base.block.ConnectedBlocksByAP.Length);
+            foreach (var b in base.block.ConnectedBlocksByAP)
+            {
+                Console.WriteLine(b?.name);
+            }
+        }
+
+        private void OnAttach()
+        {
+            Console.WriteLine("\nProceduralBlock attached");
+            Console.WriteLine(base.block.NumConnectedAPs + " " + base.block.ConnectedBlocksByAP.Length);
+            foreach (var b in base.block.ConnectedBlocksByAP)
+            {
+                Console.WriteLine(b?.name);
+            }
         }
 
         private void OnSerialize(bool saving, TankPreset.BlockSpec blockSpec)
         {
             if (saving)
             {
+                //Console.WriteLine("Procedural Save");
                 ModuleProcedural.SerialData serialData = new ModuleProcedural.SerialData()
                 {
-                    cells = this.cells,
-                    aps = this.aps
+                    /*cells = this.cells,
+                    aps = this.aps*/
+                    size = this.Size,
+                    position = base.block.cachedLocalPosition
                 };
                 serialData.Store(blockSpec.saveState);
             }
             else
             {
+                Console.WriteLine("Procedural Load");
+                Console.WriteLine(base.block.IsAttached);
                 ModuleProcedural.SerialData serialData2 = Module.SerialData<ModuleProcedural.SerialData>.Retrieve(blockSpec.saveState);
                 if (serialData2 != null)
                 {
-                    this.Cells = serialData2.cells;
-                    this.APs = serialData2.aps;
+                    /*this.Cells = serialData2.cells;
+                    this.APs = serialData2.aps;*/
+                    this.deserializing = true;
+                    //Console.WriteLine(serialData2.size.ToString());
+                    this.Size = serialData2.size;
+                    this.deserializing = false;
                 }
             }
         }
@@ -188,8 +333,10 @@ namespace Exund.ProceduralBlocks
         [Serializable]
         private new class SerialData : Module.SerialData<ModuleProcedural.SerialData>
         {
-            public List<IntVector3> cells;
-            public List<Vector3> aps;
+            /*public List<IntVector3> cells;
+            public List<Vector3> aps;*/
+            public IntVector3 size;
+            public IntVector3 position;
         }
     }
 }

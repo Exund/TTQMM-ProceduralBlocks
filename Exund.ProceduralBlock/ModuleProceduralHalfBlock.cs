@@ -24,14 +24,28 @@ namespace Exund.ProceduralBlocks
                         {
                             aps.Add(new Vector3(x, -0.5f, z));
                         }
-
                         if (x == 0)
                         {
                             aps.Add(new Vector3(-0.5f, y, z));
                         }
+                        if (z == 0 || z == size.z - 1)
+                        {
+                            var s = Math.Min(size.x, size.y);
+                            if((x + y + 1) <= s)
+                            {
+                                if (z == 0) aps.Add(new Vector3(x, y, -0.5f));
+                                if (z == size.z - 1) aps.Add(new Vector3(x, y, z + 0.5f));
+                            }
+                        }
                     }
                 }
             }
+        }
+
+        protected override void GenerateProperties()
+        {
+            var vol = ((Vector3)this.size) / 2;
+            base.block.ChangeMass(base.block.m_DefaultMass * vol.x * vol.y * vol.z);
         }
     }
 }

@@ -12,6 +12,16 @@ namespace Exund.ProceduralBlocks
         private static GameObject _holder;
         public static void Load()
         {
+            /*
+             * Need to add harmony patch
+             * Before : BlockManager.AddBlock
+             * 
+             * Check if block has ModuleProcedural
+             * Call ModuleProcedural.BeforeBlockAdded
+             * in BeforeBlockAdded generate Cells and APs
+             */
+
+
             _holder = new GameObject();
             _holder.AddComponent<ProceduralEditor>();
             UnityEngine.Object.DontDestroyOnLoad(_holder);
@@ -114,7 +124,7 @@ namespace Exund.ProceduralBlocks
                 .SetModel(m3, m3, true, cube.GetComponent<MeshRenderer>().material)
                 .SetSize(IntVector3.one)
                 .AddComponent<ModuleProceduralHalfBlock>();
-            procedural_half.TankBlock.attachPoints = new Vector3[] { new Vector3(0, -0.5f, 0), new Vector3(-0.5f, 0, 0) };
+            procedural_half.TankBlock.attachPoints = new Vector3[] { new Vector3(0, -0.5f, 0), new Vector3(-0.5f, 0, 0), new Vector3(0, 0, -0.5f), new Vector3(0, 0, 0.5f) };
             procedural_half.RegisterLater();
 
             var m4 = new Mesh();
@@ -159,7 +169,7 @@ namespace Exund.ProceduralBlocks
                 .SetModel(m4, m4, true, cube.GetComponent<MeshRenderer>().material)
                 .SetSize(IntVector3.one)
                 .AddComponent<ModuleProceduralCorner2>();
-            procedural_corner_2.TankBlock.attachPoints = new Vector3[] { new Vector3(-0.5f, 0, 0) };
+            procedural_corner_2.TankBlock.attachPoints = new Vector3[] { new Vector3(-0.5f, 0, 0), new Vector3(0, -0.5f, 0), new Vector3(0, 0, -0.5f) };
             procedural_corner_2.RegisterLater();
 
             var m5 = new Mesh();
@@ -174,7 +184,7 @@ namespace Exund.ProceduralBlocks
             uvs = new Vector2[vertices.Length];
             for (int i = 0; i < uvs.Length; i++)
             {
-                uvs[i] = new Vector2(0, 0);
+                uvs[i] = new Vector2(vertices[i].x, vertices[i].z);
             }
             triangles = new int[]
             {
@@ -204,6 +214,16 @@ namespace Exund.ProceduralBlocks
                 .AddComponent<ModuleProceduralCorner3>();
             procedural_corner_3.TankBlock.attachPoints = new Vector3[] { new Vector3(-0.5f, 0, 0), new Vector3(0, -0.5f, 0), new Vector3(0, 0, -0.5f) };
             procedural_corner_3.RegisterLater();
+        }
+
+        public static bool PointInTriangle(Vector2 p, Vector2 p0, Vector2 p1, Vector2 p2)
+        {
+            var A = 1 / 2 * (-p1.y * p2.x + p0.y * (-p1.x + p2.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y);
+            var sign = A < 0 ? -1 : 1;
+            var s = (p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y) * sign;
+            var t = (p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y) * sign;
+
+            return s > 0 && t > 0 && (s + t) < 2 * A * sign;
         }
     }
 }

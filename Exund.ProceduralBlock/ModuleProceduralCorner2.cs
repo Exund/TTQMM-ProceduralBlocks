@@ -24,6 +24,18 @@ namespace Exund.ProceduralBlocks
                         {
                             aps.Add(new Vector3(-0.5f, y, z));
                         }
+                        if (y == 0)
+                        {
+                            var s = Math.Min(size.x, size.z);
+                            if ((x + z + 1) <= s)
+                                aps.Add(new Vector3(x, -0.5f, z));
+                        }
+                        if (z == 0)
+                        {
+                            var s = Math.Min(size.x, size.y);
+                            if ((x + y + 1) <= s)
+                                aps.Add(new Vector3(x, y, -0.5f));
+                        }
                     }
                 }
             }
