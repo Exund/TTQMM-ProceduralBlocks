@@ -8,6 +8,7 @@ namespace Exund.ProceduralBlocks
 {
     class ModuleProceduralCorner2 : ModuleProcedural
     {
+        protected override float MassScaler => 1f/3f;
         protected override void GenerateCellsAPs()
         {
             cells = new List<IntVector3>();

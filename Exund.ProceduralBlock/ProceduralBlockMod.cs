@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 using UnityEngine;
 using Nuterra.BlockInjector;
+using Harmony;
 
 namespace Exund.ProceduralBlocks
 {
@@ -12,15 +14,8 @@ namespace Exund.ProceduralBlocks
         private static GameObject _holder;
         public static void Load()
         {
-            /*
-             * Need to add harmony patch
-             * Before : BlockManager.AddBlock
-             * 
-             * Check if block has ModuleProcedural
-             * Call ModuleProcedural.BeforeBlockAdded
-             * in BeforeBlockAdded generate Cells and APs
-             */
-
+            var harmony = HarmonyInstance.Create("exund.prodcedural.blocks");
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
 
             _holder = new GameObject();
             _holder.AddComponent<ProceduralEditor>();
@@ -119,7 +114,7 @@ namespace Exund.ProceduralBlocks
                 .SetFaction(FactionSubTypes.EXP)
                 .SetCategory(BlockCategories.Standard)
                 .SetGrade()
-                .SetHP(250)
+                .SetHP(250/2)
                 .SetMass(1)
                 .SetModel(m3, m3, true, cube.GetComponent<MeshRenderer>().material)
                 .SetSize(IntVector3.one)
@@ -178,7 +173,6 @@ namespace Exund.ProceduralBlocks
                 new Vector3(-0.5f, -0.5f, -0.5f),
                 new Vector3(-0.5f, -0.5f, 0.5f),
                 new Vector3(-0.5f, 0.5f, -0.5f),
-                //new Vector3(-0.5f, 0.5f, 0.5f),
                 new Vector3(0.5f, -0.5f, -0.5f)
             };
             uvs = new Vector2[vertices.Length];
@@ -207,7 +201,7 @@ namespace Exund.ProceduralBlocks
                 .SetFaction(FactionSubTypes.EXP)
                 .SetCategory(BlockCategories.Standard)
                 .SetGrade()
-                .SetHP(250)
+                .SetHP(250/3)
                 .SetMass(1)
                 .SetModel(m5, m5, true, cube.GetComponent<MeshRenderer>().material)
                 .SetSize(IntVector3.one)
@@ -224,6 +218,22 @@ namespace Exund.ProceduralBlocks
             var t = (p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y) * sign;
 
             return s > 0 && t > 0 && (s + t) < 2 * A * sign;
+        }
+
+        internal class Patches
+        {
+            [HarmonyPatch(typeof(BlockManager), "AddBlock")]
+            private static class BlockManagerFix
+            {
+                private static void Prefix(ref TankBlock block, IntVector3 localPos)
+                {
+                    var module = block.GetComponent<ModuleProcedural>();
+                    if(module)
+                    {
+                        module.BeforeBlockAdded(localPos);
+                    }
+                }
+            }
         }
     }
 }

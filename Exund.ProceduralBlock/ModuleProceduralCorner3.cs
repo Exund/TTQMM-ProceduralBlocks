@@ -8,6 +8,7 @@ namespace Exund.ProceduralBlocks
 {
     class ModuleProceduralCorner3 : ModuleProcedural
     {
+        protected override float MassScaler => 1f/6f;
         protected override void GenerateCellsAPs()
         {
             cells = new List<IntVector3>();
@@ -41,12 +42,6 @@ namespace Exund.ProceduralBlocks
                     }
                 }
             }
-        }
-
-        protected override void GenerateProperties()
-        {
-            var vol = ((Vector3)this.size) / 3;
-            base.block.ChangeMass(base.block.m_DefaultMass * vol.x * vol.y * vol.z);
         }
     }
 }
