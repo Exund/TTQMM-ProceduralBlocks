@@ -13,7 +13,6 @@ namespace Exund.ProceduralBlocks
         private Rect win;
 
         private ModuleProcedural module;
-        private bool isAttached = true;
         private int x, y, z;
 
         private void Update()
@@ -24,7 +23,7 @@ namespace Exund.ProceduralBlocks
                 try
                 {
                     var b = Singleton.Manager<ManPointer>.inst.targetVisible.block;
-                    isAttached = b.IsAttached;
+                    if (b.IsAttached) return;
                     module = b.GetComponent<ModuleProcedural>();
                     x = module.Size.x;
                     y = module.Size.y;
@@ -41,7 +40,7 @@ namespace Exund.ProceduralBlocks
 
         private void OnGUI()
         {
-            if (!visible || !module || isAttached) return;
+            if (!visible || !module || module.block.IsAttached) return;
 
             try
             {

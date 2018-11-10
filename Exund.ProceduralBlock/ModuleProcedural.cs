@@ -13,6 +13,7 @@ namespace Exund.ProceduralBlocks
         protected List<IntVector3> cells = new List<IntVector3> { IntVector3.zero };
         protected List<Vector3> aps = new List<Vector3>();
         protected IntVector3 size = IntVector3.one;
+        protected float originalMaxHealth;
         protected virtual float MassScaler => 1f;
         protected virtual float HealthScaler => MassScaler;
 
@@ -27,6 +28,8 @@ namespace Exund.ProceduralBlocks
 
         protected static FieldInfo SpawnContext_block;
         protected static FieldInfo SpawnContext_blockSpec;
+
+        private bool spawned = false;
 
         static ModuleProcedural()
         {
@@ -105,7 +108,7 @@ namespace Exund.ProceduralBlocks
             }
             set
             {
-                if (value == size) return;
+                //if (value == size) return;
                 if (value.x < 1) value.x = 1;
                 if (value.y < 1) value.y = 1;
                 if (value.z < 1) value.z = 1;
@@ -115,24 +118,29 @@ namespace Exund.ProceduralBlocks
                 GenerateProperties();
                 Cells = cells;
                 APs = aps;
+
+                CalculateDefaultPhysicsConstants.Invoke(base.block, null);
             }
         }
 
         public void BeforeBlockAdded(IntVector3 localPos)
         {
+            if (spawned) return;
             var serializationBuffer = (Array)s_BlockSerializationBuffer.GetValue(null);
+            Console.WriteLine(localPos.ToString());
             try
             {
                 for (int i = 0; i < serializationBuffer.Length; i++)
                 {
                     object sblock = serializationBuffer.GetValue(i);
-                    var block = (TankBlock)SpawnContext_block.GetValue(sblock);
-                    var blockSpec = (TankPreset.BlockSpec)SpawnContext_blockSpec.GetValue(sblock);
-
+                    var bblock = (TankBlock)SpawnContext_block.GetValue(sblock);
+                    var blockSpecn = (TankPreset.BlockSpec?)SpawnContext_blockSpec.GetValue(sblock);
+                    if (blockSpecn == null) continue;
+                    var blockSpec = (TankPreset.BlockSpec)blockSpecn;
                     if (blockSpec.saveState.Count == 0) continue;
                     var data = Module.SerialData<ModuleProcedural.SerialData>.Retrieve(blockSpec.saveState);
-
-                    if (base.block == block)
+                    Console.WriteLine(blockSpec.position.ToString() + " " + data.position.ToString() + " " + data.size.ToString() + " " + (base.block == bblock));
+                    if (base.block == bblock )//|| blockSpec.position.ToString() == data.position.ToString())
                     {
                         this.Size = data.size;
                         break;
@@ -143,6 +151,7 @@ namespace Exund.ProceduralBlocks
             {
                 Console.WriteLine(e);
             }
+            spawned = true;
         }
 
         protected virtual void GenerateCellsAPs()
@@ -210,24 +219,38 @@ namespace Exund.ProceduralBlocks
             mesh.RecalculateBounds();
             meshFilter.sharedMesh = mesh;
             meshCollider.sharedMesh = mesh;
-            CalculateDefaultPhysicsConstants.Invoke(base.block, null);
         }
 
         protected virtual void GenerateProperties()
         {
             base.block.ChangeMass(base.block.m_DefaultMass * this.size.x * this.size.y * this.size.z * this.MassScaler);
-            base.block.GetComponent<ModuleDamage>().maxHealth *= (int)(this.size.x * this.size.y * this.size.z * this.HealthScaler);
+            var healthScale = this.size.x * this.size.y * this.size.z * this.HealthScaler;
+
+            var maxHealth = originalMaxHealth * healthScale;
+            base.block.damage.maxHealth = (int)(maxHealth);
+
+            var damageable = base.block.visible.damageable;
+            var healed = damageable.IsAtFullHealth;
+            damageable.SetMaxHealth(maxHealth);
+            if (healed) damageable.InitHealth(-1337f);
         }   
 
         private void OnSpawn()
         {
-            this.Size = this.size;
+            //this.Size = IntVector3.one;
+            if (originalMaxHealth == 0f) originalMaxHealth = base.block.damage.maxHealth;
         }
 
         private void OnPool()
         {
             base.block.serializeEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
             base.block.serializeTextEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
+        }
+
+        private void OnRecycle()
+        {
+            this.Size = IntVector3.one;
+            spawned = false;
         }
 
         private void OnSerialize(bool saving, TankPreset.BlockSpec blockSpec)
