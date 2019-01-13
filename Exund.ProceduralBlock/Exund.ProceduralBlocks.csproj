@@ -89,8 +89,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ModuleProcedural.cs" />
+    <Compile Include="ModuleProceduralRoundedCorner2.cs" />
+    <Compile Include="ModuleProceduralRoundedCorner3.cs" />
     <Compile Include="ModuleProceduralCorner3.cs" />
     <Compile Include="ModuleProceduralCorner2.cs" />
+    <Compile Include="ModuleProceduralConverter.cs" />
+    <Compile Include="ModuleProceduralRoundedHalfBlock.cs" />
     <Compile Include="ModuleProceduralHalfBlock.cs" />
     <Compile Include="ModuleProceduralCylinder.cs" />
     <Compile Include="ProceduralBlockMod.cs" />
@@ -98,9 +102,39 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Procedural Block.obj" />
+    <None Include="Assets\Procedural Corner %282-way%29.obj" />
+    <None Include="Assets\Procedural Corner %283-way%29.obj" />
+    <None Include="Assets\Procedural Cylinder-Cube Converter.obj" />
+    <None Include="Assets\Procedural Cylinder.obj" />
+    <None Include="Assets\Procedural Half Block.obj" />
+    <None Include="Assets\Procedural Inside Corner %282-way%29.obj" />
+    <None Include="Assets\Procedural Inside Corner %283-way%29.obj" />
+    <None Include="Assets\Procedural Inside Corner Filled %283-way%29.obj" />
+    <None Include="Assets\Procedural Inside Rounded Corner %282-way%29.obj" />
+    <None Include="Assets\Procedural Inside Rounded Corner %283-way%29.obj" />
+    <None Include="Assets\Procedural Inside Rounded Corner Filled %283-way%29.obj" />
+    <None Include="Assets\Procedural Rounded Corner %282-way%29.obj" />
+    <None Include="Assets\Procedural Rounded Corner %283-way%29.obj" />
+    <None Include="Assets\Procedural Rounded Half Block.obj" />
+    <None Include="Assets\Procedural Sphere.obj" />
     <None Include="mod.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\GCProceduralBlocksTex.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\GSOProceduralBlockTex.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HEProceduralBlockTex.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\VentureProceduralBlockTex.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -19,6 +19,7 @@ namespace Exund.ProceduralBlocks
 
         protected Vector3[] originalVertices;
 
+        protected static FieldInfo FilledCellsGravityScaleFactors;
         protected static PropertyInfo ConnectedBlocksByAP;
         protected static FieldInfo m_BlockCellBounds;
         protected static MethodInfo CalculateDefaultPhysicsConstants;
@@ -31,8 +32,23 @@ namespace Exund.ProceduralBlocks
 
         private bool spawned = false;
 
+        public Dictionary<Face, bool> faces = new Dictionary<Face, bool>() {
+            {Face.Top, true },
+            {Face.Bottom, true },
+            {Face.Left, true },
+            {Face.Right, true },
+            {Face.Front, true },
+            {Face.Back, true }
+        };
+
+        public bool inverted = false;
+        /*protected LineRenderer line;
+        protected LineRenderer line2;
+        protected LineRenderer line3;*/
+
         static ModuleProcedural()
         {
+            FilledCellsGravityScaleFactors = typeof(TankBlock).GetField("FilledCellsGravityScaleFactors", BindingFlags.Instance | BindingFlags.NonPublic);
             ConnectedBlocksByAP = typeof(TankBlock).GetProperty("ConnectedBlocksByAP");
             m_BlockCellBounds = typeof(TankBlock).GetField("m_BlockCellBounds", BindingFlags.Instance | BindingFlags.NonPublic);//.First(f => f.Name.Contains("m_BlockCellBounds"));
             CalculateDefaultPhysicsConstants = typeof(TankBlock).GetMethod("CalculateDefaultPhysicsConstants", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -63,6 +79,12 @@ namespace Exund.ProceduralBlocks
                 cells = value;
                 base.block.filledCells = cells.ToArray();
                 base.block.filledCellFlags = new byte[cells.Count];
+                var g = new float[cells.Count];
+                for (int i = 0; i < g.Length; i++)
+                {
+                    g[i] = 1f;
+                }
+                FilledCellsGravityScaleFactors.SetValue(base.block, g);
                 var bounds = new Bounds(Vector3.zero, Vector3.zero);
                 foreach (IntVector3 c in cells)
                 {
@@ -93,6 +115,14 @@ namespace Exund.ProceduralBlocks
             set
             {
                 if (base.block.IsAttached) return;
+
+                if (!faces[Face.Top]) value.RemoveAll(v => v.y == size.y - 0.5f);
+                if (!faces[Face.Bottom]) value.RemoveAll(v => v.y == -0.5f);
+                if (!faces[Face.Left]) value.RemoveAll(v => v.z == size.z - 0.5f);
+                if (!faces[Face.Right]) value.RemoveAll(v => v.z == -0.5f);
+                if (!faces[Face.Front]) value.RemoveAll(v => v.x == size.x - 0.5f);
+                if (!faces[Face.Back]) value.RemoveAll(v => v.x == -0.5f);
+
                 aps = value;
                 base.block.attachPoints = aps.ToArray();
                 
@@ -127,7 +157,7 @@ namespace Exund.ProceduralBlocks
         {
             if (spawned) return;
             var serializationBuffer = (Array)s_BlockSerializationBuffer.GetValue(null);
-            Console.WriteLine(localPos.ToString());
+            //Console.WriteLine(localPos.ToString());
             try
             {
                 for (int i = 0; i < serializationBuffer.Length; i++)
@@ -139,10 +169,12 @@ namespace Exund.ProceduralBlocks
                     var blockSpec = (TankPreset.BlockSpec)blockSpecn;
                     if (blockSpec.saveState.Count == 0) continue;
                     var data = Module.SerialData<ModuleProcedural.SerialData>.Retrieve(blockSpec.saveState);
-                    Console.WriteLine(blockSpec.position.ToString() + " " + data.position.ToString() + " " + data.size.ToString() + " " + (base.block == bblock));
+                    //Console.WriteLine(blockSpec.position.ToString() + " " + data.position.ToString() + " " + data.size.ToString() + " " + (base.block == bblock));
                     if (base.block == bblock )//|| blockSpec.position.ToString() == data.position.ToString())
                     {
                         this.Size = data.size;
+                        this.faces = data.faces ?? this.faces;
+                        this.inverted = data.inverted;
                         break;
                     }
                 }
@@ -260,7 +292,9 @@ namespace Exund.ProceduralBlocks
                 ModuleProcedural.SerialData serialData = new ModuleProcedural.SerialData()
                 {
                     size = this.Size,
-                    position = base.block.cachedLocalPosition
+                    position = base.block.cachedLocalPosition,
+                    faces = this.faces,
+                    inverted = this.inverted
                 };
                 serialData.Store(blockSpec.saveState);
             }
@@ -279,6 +313,19 @@ namespace Exund.ProceduralBlocks
         {
             public IntVector3 size;
             public IntVector3 position;
+            public Dictionary<Face, bool> faces;
+            public bool inverted;
+        }
+
+        public enum Face
+        {
+            Top,
+            Bottom,
+            Left,
+            Right,
+            Front,
+            Back,
+            All
         }
     }
 }

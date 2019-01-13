@@ -19,7 +19,7 @@ namespace Exund.ProceduralBlocks
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
             {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 200f, 200f, 200f);
+                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 300f, 200f, 300f);
                 try
                 {
                     var b = Singleton.Manager<ManPointer>.inst.targetVisible.block;
@@ -61,6 +61,13 @@ namespace Exund.ProceduralBlocks
             int.TryParse(GUILayout.TextField(y.ToString()), out y);
             GUILayout.Label("Z");
             int.TryParse(GUILayout.TextField(z.ToString()), out z);
+
+            for (int i = 0; i < module.faces.Count; i++)
+            {
+                var face = module.faces.Keys.ElementAt(i);
+                module.faces[face] = GUILayout.Toggle(module.faces[face], face.ToString());
+            }
+
             if (GUILayout.Button("Close"))
             {
                 visible = false;

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Exund.ProceduralBlocks
 {
-    public class ModuleProceduralCylinder : ModuleProcedural
+    class ModuleProceduralConverter : ModuleProcedural
     {
         public float sox = 0;
         public float soz = 0;
@@ -20,7 +20,6 @@ namespace Exund.ProceduralBlocks
             cells = new List<IntVector3>();
             aps = new List<Vector3>();
             //var vc = 0.5f * ((Vector3)size - Vector3.one);
-
             var center = ((Vector3)size - Vector3.one) * 0.5f;
             var rx = (size.x + sox) * ssx + rox;
             var rz = (size.z + soz) * ssz + roz;
@@ -32,12 +31,11 @@ namespace Exund.ProceduralBlocks
                     {
                         cells.Add(new IntVector3(x, y, z));
 
-                        if(y == 0 || y == size.y - 1)
+                        if (y == 0)
                         {
-                            if(Math.Pow(x - center.x, 2) / Math.Pow(rx, 2) + Math.Pow(z - center.z, 2) / Math.Pow(rz, 2) <= 1)
+                            if (Math.Pow(x - center.x, 2) / Math.Pow(rx, 2) + Math.Pow(z - center.z, 2) / Math.Pow(rz, 2) <= 1)
                             {
-                                if(y == 0) aps.Add(new Vector3(x, -0.5f, z));
-                                if(y == size.y - 1) aps.Add(new Vector3(x, y + 0.5f, z));
+                                aps.Add(new Vector3(x, -0.5f, z));
                             }
                         }
 
@@ -66,11 +64,10 @@ namespace Exund.ProceduralBlocks
                         //    if((lu / ld + ru / rd) <= 1.5f)
                         //        aps.Add(new Vector3(x, -0.5f, z));
                         //}
-                        //if (y == size.y - 1)
-                        //{
-                        //    if ((lu / ld + ru / rd) <= 1.5f)
-                        //        aps.Add(new Vector3(x, y + 0.5f, z));
-                        //}
+                        if (y == size.y - 1)
+                        {
+                            aps.Add(new Vector3(x, y + 0.5f, z));
+                        }
                     }
                 }
             }
