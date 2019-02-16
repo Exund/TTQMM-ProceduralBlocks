@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Reflection;
 using UnityEngine;
 using Nuterra.BlockInjector;
 using Harmony;
+using Exund.ColorBlock;
 
 namespace Exund.ProceduralBlocks
 {
     public class ProceduralBlocksMod
     {
+        public static string TechArtFolder = Path.Combine(Application.dataPath, "../TechArt");
         private static GameObject _holder;
         public static void Load()
         {
@@ -19,6 +22,8 @@ namespace Exund.ProceduralBlocks
 
             _holder = new GameObject();
             _holder.AddComponent<ProceduralEditor>();
+            _holder.AddComponent<ImageToTech>();
+            _holder.AddComponent<ColorTools>();
             UnityEngine.Object.DontDestroyOnLoad(_holder);
 
             var t = new Texture2D(1, 1);
@@ -26,6 +31,25 @@ namespace Exund.ProceduralBlocks
 
             Material mat = GameObjectJSON.MaterialFromShader();
             mat.mainTexture = t;
+
+            var cube1 = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube1.GetComponent<MeshRenderer>().material.color = Color.white;
+            cube1.GetComponent<MeshRenderer>().material.mainTexture = t;
+            var color_block = new BlockPrefabBuilder()
+                .SetBlockID(7000, "64965b4027b723b16d1c")
+                .SetName("Color Block")
+                .SetDescription("A block that can change color (right click to edit)")
+                .SetFaction(FactionSubTypes.SPE)
+                .SetCategory(BlockCategories.Standard)
+                .SetGrade()
+                .SetHP(250)
+                .SetMass(1)
+                .SetModel(cube1.GetComponent<MeshFilter>().sharedMesh, cube1.GetComponent<MeshFilter>().sharedMesh, true, cube1.GetComponent<MeshRenderer>().material)
+                .SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
+                .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile("Assets/colorblock_icon.png")))
+                .AddComponent<ModuleColor>();
+            color_block.RegisterLater();
+            GameObject.Destroy(cube1);
 
             var cube = GameObjectJSON.MeshFromFile("Assets/Procedural Block.obj");
             cube.name = "ProceduralMesh";
@@ -38,9 +62,10 @@ namespace Exund.ProceduralBlocks
                 .SetGrade()
                 .SetHP(250)
                 .SetMass(1)
-                .SetModel(cube, cube, Material:mat)
+                .SetModel(cube, cube, Material: mat)
                 .SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
-                .AddComponent<ModuleProcedural>();
+                .AddComponent<ModuleProcedural>()
+                .AddComponent<ModuleColor>();
             procedural_block.RegisterLater();
 
             var cylinder = GameObjectJSON.MeshFromFile("Assets/Procedural Cylinder.obj");
@@ -56,7 +81,8 @@ namespace Exund.ProceduralBlocks
                 .SetMass(1)
                 .SetModel(cylinder, cylinder, true, mat)
                 .SetSize(IntVector3.one)
-                .AddComponent<ModuleProceduralCylinder>();
+                .AddComponent<ModuleProceduralCylinder>()
+                .AddComponent<ModuleColor>();
             procedural_cylinder.TankBlock.attachPoints = new Vector3[] { new Vector3(0, -0.5f, 0), new Vector3(0, 0.5f, 0) };
             procedural_cylinder.RegisterLater();
 
@@ -73,7 +99,8 @@ namespace Exund.ProceduralBlocks
                 .SetMass(1)
                 .SetModel(half, half, true, mat)
                 .SetSize(IntVector3.one)
-                .AddComponent<ModuleProceduralHalfBlock>();
+                .AddComponent<ModuleProceduralHalfBlock>()
+                .AddComponent<ModuleColor>();
             procedural_half.TankBlock.attachPoints = new Vector3[] { new Vector3(0, -0.5f, 0), new Vector3(-0.5f, 0, 0), new Vector3(0, 0, -0.5f), new Vector3(0, 0, 0.5f) };
             procedural_half.RegisterLater();
 
@@ -90,7 +117,8 @@ namespace Exund.ProceduralBlocks
                 .SetMass(1)
                 .SetModel(corner2, corner2, true, mat)
                 .SetSize(IntVector3.one)
-                .AddComponent<ModuleProceduralCorner2>();
+                .AddComponent<ModuleProceduralCorner2>()
+                .AddComponent<ModuleColor>();
             procedural_corner_2.TankBlock.attachPoints = new Vector3[] { new Vector3(0.5f, 0, 0), new Vector3(0, -0.5f, 0), new Vector3(0, 0, 0.5f) };
             procedural_corner_2.RegisterLater();
 
@@ -107,7 +135,8 @@ namespace Exund.ProceduralBlocks
                 .SetMass(1)
                 .SetModel(corner3, corner3, true, mat)
                 .SetSize(IntVector3.one)
-                .AddComponent<ModuleProceduralCorner3>();
+                .AddComponent<ModuleProceduralCorner3>()
+                .AddComponent<ModuleColor>();
             procedural_corner_3.TankBlock.attachPoints = new Vector3[] { new Vector3(-0.5f, 0, 0), new Vector3(0, -0.5f, 0), new Vector3(0, 0, -0.5f) };
             procedural_corner_3.RegisterLater();
 
@@ -124,7 +153,8 @@ namespace Exund.ProceduralBlocks
                 .SetMass(1)
                 .SetModel(rounded, rounded, true, mat)
                 .SetSize(IntVector3.one)
-                .AddComponent<ModuleProceduralRoundedHalfBlock>();
+                .AddComponent<ModuleProceduralRoundedHalfBlock>()
+                .AddComponent<ModuleColor>();
             procedural_rounded.TankBlock.attachPoints = new Vector3[] { new Vector3(0, -0.5f, 0), new Vector3(-0.5f, 0, 0), new Vector3(0, 0, -0.5f), new Vector3(0, 0, 0.5f) };
             procedural_rounded.RegisterLater();
 
@@ -141,7 +171,8 @@ namespace Exund.ProceduralBlocks
                 .SetMass(1)
                 .SetModel(sphere, sphere, true, mat)
                 .SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
-                .AddComponent<ModuleProcedural>();
+                .AddComponent<ModuleProcedural>()
+                .AddComponent<ModuleColor>();
             procedural_sphere.RegisterLater();
 
             var converter = GameObjectJSON.MeshFromFile("Assets/Procedural Cylinder-Cube Converter.obj");
@@ -157,7 +188,8 @@ namespace Exund.ProceduralBlocks
                 .SetMass(1)
                 .SetModel(converter, converter, true, mat)
                 .SetSize(IntVector3.one)
-                .AddComponent<ModuleProceduralConverter>();
+                .AddComponent<ModuleProceduralConverter>()
+                .AddComponent<ModuleColor>();
             procedural_converter.TankBlock.attachPoints = new Vector3[] { new Vector3(0, -0.5f, 0), new Vector3(0, 0.5f, 0) };
             procedural_converter.RegisterLater();
 
@@ -174,7 +206,8 @@ namespace Exund.ProceduralBlocks
                 .SetMass(1)
                 .SetModel(incorner2, incorner2, true, mat)
                 .SetSize(IntVector3.one)
-                .AddComponent<ModuleProceduralCorner2>(out ModuleProceduralCorner2 inverted2);
+                .AddComponent<ModuleProceduralCorner2>(out ModuleProceduralCorner2 inverted2)
+                .AddComponent<ModuleColor>();
             procedural_incorner_2.TankBlock.attachPoints = new Vector3[] { new Vector3(-0.5f, 0, 0), new Vector3(0, -0.5f, 0), new Vector3(0, 0, -0.5f), new Vector3(0.5f, 0, 0), new Vector3(0, 0, 0.5f) };
             inverted2.inverted = true;
             procedural_incorner_2.RegisterLater();
@@ -192,7 +225,8 @@ namespace Exund.ProceduralBlocks
                 .SetMass(1)
                 .SetModel(incorner3, incorner3, true, mat)
                 .SetSize(IntVector3.one)
-                .AddComponent<ModuleProceduralCorner3>(out ModuleProceduralCorner3 inverted3);
+                .AddComponent<ModuleProceduralCorner3>(out ModuleProceduralCorner3 inverted3)
+                .AddComponent<ModuleColor>();
             procedural_incorner_3.TankBlock.attachPoints = new Vector3[] { new Vector3(-0.5f, 0, 0), new Vector3(0, -0.5f, 0), new Vector3(0, 0, -0.5f), new Vector3(0.5f, 0, 0), new Vector3(0, 0.5f, 0), new Vector3(0, 0, 0.5f) };
             inverted3.inverted = true;
             procedural_incorner_3.RegisterLater();
@@ -210,7 +244,8 @@ namespace Exund.ProceduralBlocks
                 .SetMass(1)
                 .SetModel(rounded_corner2, rounded_corner2, true, mat)
                 .SetSize(IntVector3.one)
-                .AddComponent<ModuleProceduralRoundedCorner2>();
+                .AddComponent<ModuleProceduralRoundedCorner2>()
+                .AddComponent<ModuleColor>();
             procedural_rounded_corner2.TankBlock.attachPoints = new Vector3[] { new Vector3(-0.5f, 0, 0), new Vector3(0, -0.5f, 0), new Vector3(0, 0, -0.5f) };
             procedural_rounded_corner2.RegisterLater();
 
@@ -227,7 +262,8 @@ namespace Exund.ProceduralBlocks
                 .SetMass(1)
                 .SetModel(rounded_corner3, rounded_corner3, true, mat)
                 .SetSize(IntVector3.one)
-                .AddComponent<ModuleProceduralRoundedCorner3>();
+                .AddComponent<ModuleProceduralRoundedCorner3>()
+                .AddComponent<ModuleColor>();
             procedural_rounded_corner3.TankBlock.attachPoints = new Vector3[] { new Vector3(-0.5f, 0, 0), new Vector3(0, -0.5f, 0), new Vector3(0, 0, -0.5f) };
             procedural_rounded_corner3.RegisterLater();
 
@@ -244,7 +280,8 @@ namespace Exund.ProceduralBlocks
                 .SetMass(1)
                 .SetModel(rounded_incorner2, rounded_incorner2, true, mat)
                 .SetSize(IntVector3.one)
-                .AddComponent<ModuleProceduralRoundedCorner2>(out ModuleProceduralRoundedCorner2 invertedr2);
+                .AddComponent<ModuleProceduralRoundedCorner2>(out ModuleProceduralRoundedCorner2 invertedr2)
+                .AddComponent<ModuleColor>();
             procedural_rounded_incorner2.TankBlock.attachPoints = new Vector3[] { new Vector3(-0.5f, 0, 0), new Vector3(0, -0.5f, 0), new Vector3(0, 0, -0.5f) };
             invertedr2.inverted = true;
             procedural_rounded_incorner2.RegisterLater();
@@ -262,10 +299,13 @@ namespace Exund.ProceduralBlocks
                 .SetMass(1)
                 .SetModel(rounded_incorner3, rounded_incorner3, true, mat)
                 .SetSize(IntVector3.one)
-                .AddComponent<ModuleProceduralRoundedCorner3>(out ModuleProceduralRoundedCorner3 invertedr3);
+                .AddComponent<ModuleProceduralRoundedCorner3>(out ModuleProceduralRoundedCorner3 invertedr3)
+                .AddComponent<ModuleColor>();
             procedural_rounded_incorner3.TankBlock.attachPoints = new Vector3[] { new Vector3(-0.5f, 0, 0), new Vector3(0, -0.5f, 0), new Vector3(0, 0, -0.5f) };
             invertedr3.inverted = true;
             procedural_rounded_incorner3.RegisterLater();
+
+            if (!Directory.Exists(TechArtFolder)) Directory.CreateDirectory(TechArtFolder);
         }
 
         public static bool PointInTriangle(Vector2 p, Vector2 p0, Vector2 p1, Vector2 p2)
@@ -278,9 +318,26 @@ namespace Exund.ProceduralBlocks
             return s > 0 && t > 0 && (s + t) < 2 * A * sign;
         }
 
+        public static Color ColorField(Color c)
+        {
+            var c2 = (Color32)c;
+            GUILayout.BeginVertical();
+            GUILayout.Label("Red : " + c2.r);
+            c2.r = (byte)GUILayout.HorizontalSlider(c2.r, 0f, 255f);
+
+            GUILayout.Label("Green : " + c2.g);
+            c2.g = (byte)GUILayout.HorizontalSlider(c2.g, 0f, 255f);
+
+            GUILayout.Label("Blue : " + c2.b);
+            c2.b = (byte)GUILayout.HorizontalSlider(c2.b, 0f, 255f);
+            GUILayout.EndVertical();
+
+            return c2;
+        }
+
         internal class Patches
         {
-            [HarmonyPatch(typeof(BlockManager), "AddBlock")]
+            [HarmonyPatch(typeof(BlockManager), "AddBlockToTech")]
             private static class BlockManagerFix
             {
                 private static void Prefix(ref TankBlock block, IntVector3 localPos)

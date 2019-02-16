@@ -23,11 +23,13 @@ namespace Exund.ProceduralBlocks
         protected static PropertyInfo ConnectedBlocksByAP;
         protected static FieldInfo m_BlockCellBounds;
         protected static MethodInfo CalculateDefaultPhysicsConstants;
-        protected static FieldInfo s_BlockSerializationBuffer;
+        protected static FieldInfo m_PopulateTechBuffer;
         protected static FieldInfo bufferLength;
         protected static MethodInfo GetValue;
+		protected static MethodInfo InitAPFilledCells;
 
-        protected static FieldInfo SpawnContext_block;
+
+		protected static FieldInfo SpawnContext_block;
         protected static FieldInfo SpawnContext_blockSpec;
 
         private bool spawned = false;
@@ -52,12 +54,13 @@ namespace Exund.ProceduralBlocks
             ConnectedBlocksByAP = typeof(TankBlock).GetProperty("ConnectedBlocksByAP");
             m_BlockCellBounds = typeof(TankBlock).GetField("m_BlockCellBounds", BindingFlags.Instance | BindingFlags.NonPublic);//.First(f => f.Name.Contains("m_BlockCellBounds"));
             CalculateDefaultPhysicsConstants = typeof(TankBlock).GetMethod("CalculateDefaultPhysicsConstants", BindingFlags.Instance | BindingFlags.NonPublic);
-            s_BlockSerializationBuffer = typeof(ManSpawn).GetField("s_BlockSerializationBuffer", BindingFlags.NonPublic | BindingFlags.Static);
-            var t = s_BlockSerializationBuffer.FieldType;
+			InitAPFilledCells = typeof(TankBlock).GetMethod("InitAPFilledCells", BindingFlags.Instance | BindingFlags.NonPublic);
+			m_PopulateTechBuffer = typeof(ManSpawn).GetField("m_PopulateTechBuffer", BindingFlags.NonPublic | BindingFlags.Instance);
+            var t = m_PopulateTechBuffer.FieldType;
             bufferLength = t.GetField("Length", BindingFlags.Public | BindingFlags.Instance);
             GetValue = t.GetMethod("GetValue", new Type[] { typeof(int) });
 
-            t = typeof(ManSpawn).GetNestedType("SpawnContext", BindingFlags.NonPublic);
+            t = typeof(ManSpawn).GetNestedType("PopulateTechBlockInfo", BindingFlags.NonPublic);
             SpawnContext_block = t.GetField("block");
             SpawnContext_blockSpec = t.GetField("blockSpec");
         }
@@ -127,6 +130,7 @@ namespace Exund.ProceduralBlocks
                 base.block.attachPoints = aps.ToArray();
                 
                 ConnectedBlocksByAP.SetValue(base.block, new TankBlock[aps.Count], null);
+				InitAPFilledCells.Invoke(base.block, new object[0]);
             }
         }
 
@@ -156,7 +160,7 @@ namespace Exund.ProceduralBlocks
         public void BeforeBlockAdded(IntVector3 localPos)
         {
             if (spawned) return;
-            var serializationBuffer = (Array)s_BlockSerializationBuffer.GetValue(null);
+            var serializationBuffer = (Array)m_PopulateTechBuffer.GetValue(ManSpawn.inst);
             //Console.WriteLine(localPos.ToString());
             try
             {
