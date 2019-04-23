@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.IO;
 using UnityEngine;
 using System.Reflection;
 
@@ -16,8 +16,9 @@ namespace Exund.ProceduralBlocks
         protected float originalMaxHealth;
         protected virtual float MassScaler => 1f;
         protected virtual float HealthScaler => MassScaler;
+		protected string texture = "";
 
-        protected Vector3[] originalVertices;
+		protected Vector3[] originalVertices;
 
         protected static FieldInfo FilledCellsGravityScaleFactors;
         protected static PropertyInfo ConnectedBlocksByAP;
@@ -44,6 +45,7 @@ namespace Exund.ProceduralBlocks
         };
 
         public bool inverted = false;
+
         /*protected LineRenderer line;
         protected LineRenderer line2;
         protected LineRenderer line3;*/
@@ -142,7 +144,7 @@ namespace Exund.ProceduralBlocks
             }
             set
             {
-                //if (value == size) return;
+                if (value.x * value.y * value.z > 255) return;
                 if (value.x < 1) value.x = 1;
                 if (value.y < 1) value.y = 1;
                 if (value.z < 1) value.z = 1;
@@ -157,11 +159,46 @@ namespace Exund.ProceduralBlocks
             }
         }
 
+		public string Texture
+		{
+			get
+			{
+				return this.texture;
+			}
+			set
+			{
+				var meshRenderer = base.block.GetComponentsInChildren<MeshRenderer>().FirstOrDefault(mr => mr.material.name.Contains("ProceduralMaterial"));
+				if (!meshRenderer) return;
+
+				if (value == "" || !value.EndsWith(".png"))
+				{
+					meshRenderer.material.mainTexture = Texture2D.whiteTexture;
+					this.texture = "";
+				}
+				else
+				{
+					this.texture = value;
+					try
+					{
+						Texture2D t = new Texture2D(2, 2);
+						t.LoadImage(File.ReadAllBytes(Path.Combine(ProceduralBlocksMod.AssetsFolder, "Textures/"+value)));
+						meshRenderer.material.mainTexture = t;
+					}
+					catch (Exception e)
+					{
+						Console.WriteLine(e.ToString());
+						meshRenderer.material.mainTexture = Texture2D.whiteTexture;
+						this.texture = "";
+					}
+				}
+			}
+		}
+
         public void BeforeBlockAdded(IntVector3 localPos)
         {
             if (spawned) return;
             var serializationBuffer = (Array)m_PopulateTechBuffer.GetValue(ManSpawn.inst);
-            //Console.WriteLine(localPos.ToString());
+            
             try
             {
                 for (int i = 0; i < serializationBuffer.Length; i++)
@@ -173,8 +210,8 @@ namespace Exund.ProceduralBlocks
                     var blockSpec = (TankPreset.BlockSpec)blockSpecn;
                     if (blockSpec.saveState.Count == 0) continue;
                     var data = Module.SerialData<ModuleProcedural.SerialData>.Retrieve(blockSpec.saveState);
-                    //Console.WriteLine(blockSpec.position.ToString() + " " + data.position.ToString() + " " + data.size.ToString() + " " + (base.block == bblock));
-                    if (base.block == bblock )//|| blockSpec.position.ToString() == data.position.ToString())
+                    
+                    if (base.block == bblock )
                     {
                         this.Size = data.size;
                         this.faces = data.faces ?? this.faces;
@@ -235,7 +272,7 @@ namespace Exund.ProceduralBlocks
         {
             var meshFilter = base.block.GetComponentsInChildren<MeshFilter>().FirstOrDefault(mf => mf.sharedMesh.name == "ProceduralMesh");
             var meshCollider = base.block.GetComponentsInChildren<MeshCollider>().FirstOrDefault(mf => mf.sharedMesh.name == "ProceduralMesh");
-            if (!meshFilter) return;
+			if (!meshFilter) return;
 
             var mesh = Instantiate(meshFilter.sharedMesh);
             mesh.name = "ProceduralMesh";
@@ -250,7 +287,7 @@ namespace Exund.ProceduralBlocks
                 var z = vertices[i].z * size.z + 0.5f * (size.z - 1);
                 vertices[i] = new Vector3(x, y, z);
             }
-            
+
             mesh.vertices = vertices;
             mesh.RecalculateBounds();
             meshFilter.sharedMesh = mesh;
@@ -293,12 +330,13 @@ namespace Exund.ProceduralBlocks
         {
             if (saving)
             {
-                ModuleProcedural.SerialData serialData = new ModuleProcedural.SerialData()
-                {
-                    size = this.Size,
-                    position = base.block.cachedLocalPosition,
-                    faces = this.faces,
-                    inverted = this.inverted
+				ModuleProcedural.SerialData serialData = new ModuleProcedural.SerialData()
+				{
+					size = this.Size,
+					position = base.block.cachedLocalPosition,
+					faces = this.faces,
+					inverted = this.inverted,
+					texture = this.texture
                 };
                 serialData.Store(blockSpec.saveState);
             }
@@ -308,6 +346,7 @@ namespace Exund.ProceduralBlocks
                 if (serialData2 != null)
                 {
                     this.Size = serialData2.size;
+
                 }
             }
         }
@@ -319,6 +358,7 @@ namespace Exund.ProceduralBlocks
             public IntVector3 position;
             public Dictionary<Face, bool> faces;
             public bool inverted;
+			public string texture;
         }
 
         public enum Face

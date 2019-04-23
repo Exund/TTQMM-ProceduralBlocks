@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Exund.ProceduralBlocks</RootNamespace>
     <AssemblyName>Exund.ProceduralBlocks</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -105,55 +105,52 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\colorblock_icon.png">
+    <Content Include="Assets\Models\Procedural Block.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Block.obj">
+    <Content Include="Assets\Models\Procedural Corner %282-way%29.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Corner %282-way%29.obj">
+    <Content Include="Assets\Models\Procedural Corner %283-way%29.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Corner %283-way%29.obj">
+    <Content Include="Assets\Models\Procedural Cylinder-Cube Converter.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Cylinder-Cube Converter.obj">
+    <Content Include="Assets\Models\Procedural Cylinder.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Cylinder.obj">
+    <Content Include="Assets\Models\Procedural Half Block.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Half Block.obj">
+    <Content Include="Assets\Models\Procedural Inside Corner %282-way%29.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Inside Corner %282-way%29.obj">
+    <Content Include="Assets\Models\Procedural Inside Corner %283-way%29.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Inside Corner %283-way%29.obj">
+    <Content Include="Assets\Models\Procedural Inside Corner Filled %283-way%29.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Inside Corner Filled %283-way%29.obj">
+    <Content Include="Assets\Models\Procedural Inside Rounded Corner %282-way%29.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Inside Rounded Corner %282-way%29.obj">
+    <Content Include="Assets\Models\Procedural Inside Rounded Corner %283-way%29.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Inside Rounded Corner %283-way%29.obj">
+    <Content Include="Assets\Models\Procedural Inside Rounded Corner Filled %283-way%29.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Inside Rounded Corner Filled %283-way%29.obj">
+    <Content Include="Assets\Models\Procedural Rounded Corner %282-way%29.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Rounded Corner %282-way%29.obj">
+    <Content Include="Assets\Models\Procedural Rounded Corner %283-way%29.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Rounded Corner %283-way%29.obj">
+    <Content Include="Assets\Models\Procedural Rounded Half Block.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Procedural Rounded Half Block.obj">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Procedural Sphere.obj">
+    <Content Include="Assets\Models\Procedural Sphere.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="mod.json">
@@ -161,16 +158,19 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\GCProceduralBlocksTex.png">
+    <Content Include="Assets\Icons\colorblock_icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Textures\GCProceduralBlocksTex.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\GSOProceduralBlockTex.png">
+    <Content Include="Assets\Textures\GSOProceduralBlockTex.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\HEProceduralBlockTex.png">
+    <Content Include="Assets\Textures\HEProceduralBlockTex.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\VentureProceduralBlockTex.png">
+    <Content Include="Assets\Textures\VentureProceduralBlockTex.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

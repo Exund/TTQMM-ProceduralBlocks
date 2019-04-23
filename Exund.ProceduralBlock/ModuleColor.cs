@@ -9,7 +9,8 @@ namespace Exund.ColorBlock
 {
     public class ModuleColor : Module
     {
-        //private static FieldInfo MatRendererLookup;
+		//private static FieldInfo MatRendererLookup;
+		public bool active = true;
         private Color color = Color.white;
         public Color Color
         {
@@ -19,7 +20,7 @@ namespace Exund.ColorBlock
             }
             set
             {
-                if (value == this.color) return;
+                if (value == this.color || !active) return;
                 //if(MatRendererLookup == null) MatRendererLookup = typeof(TankBlock).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField).FirstOrDefault(f => f.Name.Contains("MatRendererLookup"));
                 this.color = value;
                 try
@@ -63,7 +64,8 @@ namespace Exund.ColorBlock
             {
                 ModuleColor.SerialData serialData = new ModuleColor.SerialData()
                 {
-                    color = string.Format("{0},{1},{2}", this.color.r, this.color.g, this.color.b)
+                    color = string.Format("{0},{1},{2}", this.color.r, this.color.g, this.color.b),
+					active = this.active
                 };
                 serialData.Store(blockSpec.saveState);
             }
@@ -74,6 +76,7 @@ namespace Exund.ColorBlock
                 {
                     var c = serialData2.color.Split(',');
                     this.Color = new Color(float.Parse(c[0]), float.Parse(c[1]), float.Parse(c[2]));
+					this.active = serialData2.active;
                 }
             }
         }
@@ -82,6 +85,7 @@ namespace Exund.ColorBlock
         private new class SerialData : Module.SerialData<ModuleColor.SerialData>
         {
             public string color;
+			public bool active;
         }
     }
 }
