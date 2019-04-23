@@ -159,10 +159,10 @@ namespace Exund.ColorBlock
                         }
                         tech = ManSpawn.inst.SpawnUnmanagedTank(spawnParams);
                         Tank playerTank = Singleton.playerTank;
-                        Singleton.Manager<ManTechs>.inst.SetPlayerTankLocally(null, true);
+                        Singleton.Manager<ManTechs>.inst.SetPlayerTank(null, true);
                         playerTank.visible.RemoveFromGame();
 
-                        Singleton.Manager<ManTechs>.inst.SetPlayerTankLocally(tech, true);
+                        Singleton.Manager<ManTechs>.inst.SetPlayerTank(tech, true);
                     }
                 }
                 catch (Exception e) { Console.WriteLine(e); }
