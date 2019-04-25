@@ -46,10 +46,6 @@ namespace Exund.ProceduralBlocks
 
         public bool inverted = false;
 
-        /*protected LineRenderer line;
-        protected LineRenderer line2;
-        protected LineRenderer line3;*/
-
         static ModuleProcedural()
         {
             FilledCellsGravityScaleFactors = typeof(TankBlock).GetField("FilledCellsGravityScaleFactors", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -310,7 +306,6 @@ namespace Exund.ProceduralBlocks
 
         private void OnSpawn()
         {
-            //this.Size = IntVector3.one;
             if (originalMaxHealth == 0f) originalMaxHealth = base.block.damage.maxHealth;
         }
 
@@ -323,6 +318,7 @@ namespace Exund.ProceduralBlocks
         private void OnRecycle()
         {
             this.Size = IntVector3.one;
+			this.Texture = "";
             spawned = false;
         }
 
@@ -346,7 +342,7 @@ namespace Exund.ProceduralBlocks
                 if (serialData2 != null)
                 {
                     this.Size = serialData2.size;
-
+					this.Texture = serialData2.texture;
                 }
             }
         }
