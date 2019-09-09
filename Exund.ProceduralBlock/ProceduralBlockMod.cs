@@ -8,6 +8,8 @@ using UnityEngine;
 using Nuterra.BlockInjector;
 using Harmony;
 using Exund.ColorBlock;
+using ModHelper.Config;
+using Nuterra.NativeOptions;
 
 namespace Exund.ProceduralBlocks
 {
@@ -16,9 +18,37 @@ namespace Exund.ProceduralBlocks
         public static string TechArtFolder = Path.Combine(Application.dataPath, "../TechArt");
 		public static string AssetsFolder = Path.Combine(Assembly.GetExecutingAssembly().Location, "../Assets");
 		private static GameObject _holder;
-        public static void Load()
+
+		internal static KeyCode colorToolsKeycode;
+		internal static KeyCode img2TechKeycode;
+		public static void Load()
         {
-            var harmony = HarmonyInstance.Create("exund.prodcedural.blocks");
+			ModConfig config = new ModConfig();
+			int v = (int)KeyCode.Keypad0;
+			config.TryGetConfig<int>("colorToolsKeycode", ref v);
+			colorToolsKeycode = (KeyCode)v;
+
+			OptionKey commandConsoleKey = new OptionKey("Color tools toggle", "Procedural Blocks", colorToolsKeycode);
+			commandConsoleKey.onValueSaved.AddListener(() =>
+			{
+				colorToolsKeycode = commandConsoleKey.SavedValue;
+				config["colorToolsKeycode"] = (int)colorToolsKeycode;
+			});
+
+			v = (int)KeyCode.M;
+			config.TryGetConfig<int>("img2TechKeycode", ref v);
+			img2TechKeycode = (KeyCode)v;
+
+			OptionKey img2TechKey = new OptionKey("Image to tech toggle", "Procedural Blocks", img2TechKeycode);
+			img2TechKey.onValueSaved.AddListener(() =>
+			{
+				img2TechKeycode = img2TechKey.SavedValue;
+				config["img2TechKeycode"] = (int)img2TechKeycode;
+				config.WriteConfigJsonFile();
+			});
+
+
+			var harmony = HarmonyInstance.Create("exund.prodcedural.blocks");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
 
             _holder = new GameObject();

@@ -53,7 +53,7 @@ namespace Exund.ColorBlock
 
         private void Update()
         {
-            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.K))// 
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(ProceduralBlocks.ProceduralBlocksMod.img2TechKeycode))// 
             {
                 visible = true;
             }

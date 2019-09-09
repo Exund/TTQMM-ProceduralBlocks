@@ -27,7 +27,11 @@ namespace Exund.ColorBlock
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Keypad0)) toolsVisible = !toolsVisible;
+			if (Input.GetKeyDown(ProceduralBlocks.ProceduralBlocksMod.colorToolsKeycode))
+			{
+				toolsVisible = !toolsVisible;
+				useGUILayout = toolsVisible;
+			}
             if (!toolsVisible) selectingColor = false;
 
             if (Input.GetMouseButtonDown(0) || Input.GetKey(key))
