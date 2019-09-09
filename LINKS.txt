@@ -1,1 +1,3 @@
 https://github.com/Exund/TTQMM-ProceduralBlocks/tree/master/Exund.ProceduralBlock/bin
+/Aceba1/TTQMM-ModConfigHelper
+/Exund/Nuterra.NativeOptions
