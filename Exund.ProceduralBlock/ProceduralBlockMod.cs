@@ -76,7 +76,7 @@ namespace Exund.ProceduralBlocks
                 .SetGrade()
                 .SetHP(250)
                 .SetMass(1)
-                .SetModel(cube1.GetComponent<MeshFilter>().sharedMesh, cube1.GetComponent<MeshFilter>().sharedMesh, true, cube1.GetComponent<MeshRenderer>().material)
+                .SetModel(cube1.GetComponent<MeshFilter>().sharedMesh, cube1.GetComponent<MeshFilter>().sharedMesh, true, mat)
                 .SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
                 .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile("Assets/Icons/colorblock_icon.png")))
                 .AddComponent<ModuleColor>();

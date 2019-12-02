@@ -33,6 +33,8 @@ namespace Exund.ProceduralBlocks
 		protected static FieldInfo SpawnContext_block;
         protected static FieldInfo SpawnContext_blockSpec;
 
+		protected SerialData prevData;
+
         private bool spawned = false;
 
         public Dictionary<Face, bool> faces = new Dictionary<Face, bool>() {
@@ -207,7 +209,7 @@ namespace Exund.ProceduralBlocks
                     if (blockSpec.saveState.Count == 0) continue;
                     var data = Module.SerialData<ModuleProcedural.SerialData>.Retrieve(blockSpec.saveState);
                     
-                    if (base.block == bblock )
+                    if (base.block == bblock)
                     {
                         this.Size = data.size;
                         this.faces = data.faces ?? this.faces;
@@ -296,7 +298,7 @@ namespace Exund.ProceduralBlocks
             var healthScale = this.size.x * this.size.y * this.size.z * this.HealthScaler;
 
             var maxHealth = originalMaxHealth * healthScale;
-            base.block.damage.maxHealth = (int)(maxHealth);
+            base.block.damage.maxHealth = (int)maxHealth;
 
             var damageable = base.block.visible.damageable;
             var healed = damageable.IsAtFullHealth;
@@ -341,6 +343,7 @@ namespace Exund.ProceduralBlocks
                 ModuleProcedural.SerialData serialData2 = Module.SerialData<ModuleProcedural.SerialData>.Retrieve(blockSpec.saveState);
                 if (serialData2 != null)
                 {
+					prevData = serialData2;
                     this.Size = serialData2.size;
 					this.Texture = serialData2.texture;
                 }
@@ -348,7 +351,7 @@ namespace Exund.ProceduralBlocks
         }
 
         [Serializable]
-        private new class SerialData : Module.SerialData<ModuleProcedural.SerialData>
+        public new class SerialData : Module.SerialData<ModuleProcedural.SerialData>
         {
             public IntVector3 size;
             public IntVector3 position;
