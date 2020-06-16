@@ -45,7 +45,8 @@ namespace Exund.ColorBlock
                     {
                         color = mod.Color;
                         selectingColor = false;
-                    } else if (toolsVisible)
+                    } 
+                    else if (toolsVisible)
                     {
                         if (axis[selection] == "X")
                         {
@@ -97,7 +98,7 @@ namespace Exund.ColorBlock
             {
                 if(Input.GetMouseButtonDown(1))
                 {
-                    win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 200f, 200f, 200f);
+                    win = new Rect(Input.mousePosition.x - 200f, Screen.height - Input.mousePosition.y - 200f, 200f, 200f);
                     try
                     {
                         module = Singleton.Manager<ManPointer>.inst.targetVisible.block.GetComponent<ModuleColor>();

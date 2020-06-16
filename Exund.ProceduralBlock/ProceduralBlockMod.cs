@@ -16,7 +16,7 @@ namespace Exund.ProceduralBlocks
     public class ProceduralBlocksMod
     {
         public static string TechArtFolder = Path.Combine(Application.dataPath, "../TechArt");
-		public static string AssetsFolder = Path.Combine(Assembly.GetExecutingAssembly().Location, "../Assets");
+		public static string AssetsFolder = Path.Combine(Assembly.GetExecutingAssembly().Location.Replace("Exund.ProceduralBlocks.dll", ""), "Assets");
 		private static GameObject _holder;
 
 		internal static KeyCode colorToolsKeycode;
@@ -61,7 +61,7 @@ namespace Exund.ProceduralBlocks
             t.SetPixel(0, 0, Color.white);
 
             Material mat = GameObjectJSON.MaterialFromShader();
-            mat.mainTexture = t;
+            mat.mainTexture = Texture2D.whiteTexture;
 			mat.name = "ProceduralMaterial";
 
             var cube1 = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -78,12 +78,12 @@ namespace Exund.ProceduralBlocks
                 .SetMass(1)
                 .SetModel(cube1.GetComponent<MeshFilter>().sharedMesh, cube1.GetComponent<MeshFilter>().sharedMesh, true, mat)
                 .SetSize(IntVector3.one, BlockPrefabBuilder.AttachmentPoints.All)
-                .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile("Assets/Icons/colorblock_icon.png")))
+                .SetIcon(GameObjectJSON.SpriteFromImage(GameObjectJSON.ImageFromFile(Path.Combine(AssetsFolder, "Icons/colorblock_icon.png"))))
                 .AddComponent<ModuleColor>();
             color_block.RegisterLater();
             GameObject.Destroy(cube1);
 
-            var cube = GameObjectJSON.MeshFromFile("Assets/Models/Procedural Block.obj");
+            var cube = GameObjectJSON.MeshFromFile(Path.Combine(AssetsFolder, "Models/Procedural Block.obj"));
             cube.name = "ProceduralMesh";
             var procedural_block = new BlockPrefabBuilder()
                 .SetBlockID(7001, "fd49964942512e91ec41")
@@ -100,7 +100,7 @@ namespace Exund.ProceduralBlocks
                 .AddComponent<ModuleColor>();
             procedural_block.RegisterLater();
 
-            var cylinder = GameObjectJSON.MeshFromFile("Assets/Models/Procedural Cylinder.obj");
+            var cylinder = GameObjectJSON.MeshFromFile(Path.Combine(AssetsFolder, "Models/Procedural Cylinder.obj"));
             cylinder.name = "ProceduralMesh";
             var procedural_cylinder = new BlockPrefabBuilder()
                 .SetBlockID(7002, "8ccfce9497e1ace52d5b")
@@ -118,7 +118,7 @@ namespace Exund.ProceduralBlocks
             procedural_cylinder.TankBlock.attachPoints = new Vector3[] { new Vector3(0, -0.5f, 0), new Vector3(0, 0.5f, 0) };
             procedural_cylinder.RegisterLater();
 
-            var half = GameObjectJSON.MeshFromFile("Assets/Models/Procedural Half Block.obj");
+            var half = GameObjectJSON.MeshFromFile(Path.Combine(AssetsFolder, "Models/Procedural Half Block.obj"));
             half.name = "ProceduralMesh";
             var procedural_half = new BlockPrefabBuilder()
                 .SetBlockID(7003, "89c854222b7088b24b72")
@@ -136,7 +136,7 @@ namespace Exund.ProceduralBlocks
             procedural_half.TankBlock.attachPoints = new Vector3[] { new Vector3(0, -0.5f, 0), new Vector3(-0.5f, 0, 0), new Vector3(0, 0, -0.5f), new Vector3(0, 0, 0.5f) };
             procedural_half.RegisterLater();
 
-            var corner2 = GameObjectJSON.MeshFromFile("Assets/Models/Procedural Corner (2-way).obj");
+            var corner2 = GameObjectJSON.MeshFromFile(Path.Combine(AssetsFolder, "Models/Procedural Corner (2-way).obj"));
             corner2.name = "ProceduralMesh";
             var procedural_corner_2 = new BlockPrefabBuilder()
                 .SetBlockID(7004, "3302c74153a768f81be1")
@@ -154,7 +154,7 @@ namespace Exund.ProceduralBlocks
             procedural_corner_2.TankBlock.attachPoints = new Vector3[] { new Vector3(0.5f, 0, 0), new Vector3(0, -0.5f, 0), new Vector3(0, 0, 0.5f) };
             procedural_corner_2.RegisterLater();
 
-            var corner3 = GameObjectJSON.MeshFromFile("Assets/Models/Procedural Corner (3-way).obj");
+            var corner3 = GameObjectJSON.MeshFromFile(Path.Combine(AssetsFolder, "Models/Procedural Corner (3-way).obj"));
             corner3.name = "ProceduralMesh";
             var procedural_corner_3 = new BlockPrefabBuilder()
                 .SetBlockID(7005, "5397ca4583307f7d37fe")
@@ -172,7 +172,7 @@ namespace Exund.ProceduralBlocks
             procedural_corner_3.TankBlock.attachPoints = new Vector3[] { new Vector3(-0.5f, 0, 0), new Vector3(0, -0.5f, 0), new Vector3(0, 0, -0.5f) };
             procedural_corner_3.RegisterLater();
 
-            var rounded = GameObjectJSON.MeshFromFile("Assets/Models/Procedural Rounded Half Block.obj");
+            var rounded = GameObjectJSON.MeshFromFile(Path.Combine(AssetsFolder, "Models/Procedural Rounded Half Block.obj"));
             rounded.name = "ProceduralMesh";
             var procedural_rounded = new BlockPrefabBuilder()
                 .SetBlockID(7006, "be4c9e7859e29073aec0")
@@ -190,7 +190,7 @@ namespace Exund.ProceduralBlocks
             procedural_rounded.TankBlock.attachPoints = new Vector3[] { new Vector3(0, -0.5f, 0), new Vector3(-0.5f, 0, 0), new Vector3(0, 0, -0.5f), new Vector3(0, 0, 0.5f) };
             procedural_rounded.RegisterLater();
 
-            var sphere = GameObjectJSON.MeshFromFile("Assets/Models/Procedural Sphere.obj");
+            var sphere = GameObjectJSON.MeshFromFile(Path.Combine(AssetsFolder, "Models/Procedural Sphere.obj"));
             sphere.name = "ProceduralMesh";
             var procedural_sphere = new BlockPrefabBuilder()
                 .SetBlockID(7007, "88df56b7bc96edd1e288")
@@ -207,7 +207,7 @@ namespace Exund.ProceduralBlocks
                 .AddComponent<ModuleColor>();
             procedural_sphere.RegisterLater();
 
-            var converter = GameObjectJSON.MeshFromFile("Assets/Models/Procedural Cylinder-Cube Converter.obj");
+            var converter = GameObjectJSON.MeshFromFile(Path.Combine(AssetsFolder, "Models/Procedural Cylinder-Cube Converter.obj"));
             converter.name = "ProceduralMesh";
             var procedural_converter = new BlockPrefabBuilder()
                 .SetBlockID(7008, "92f1be44b016bb6e7e50")
@@ -225,7 +225,7 @@ namespace Exund.ProceduralBlocks
             procedural_converter.TankBlock.attachPoints = new Vector3[] { new Vector3(0, -0.5f, 0), new Vector3(0, 0.5f, 0) };
             procedural_converter.RegisterLater();
 
-            var incorner2 = GameObjectJSON.MeshFromFile("Assets/Models/Procedural Inside Corner (2-way).obj");
+            var incorner2 = GameObjectJSON.MeshFromFile(Path.Combine(AssetsFolder, "Models/Procedural Inside Corner (2-way).obj"));
             incorner2.name = "ProceduralMesh";
             var procedural_incorner_2 = new BlockPrefabBuilder()
                 .SetBlockID(7009, "d2976201068b86e4b7cc")
@@ -244,7 +244,7 @@ namespace Exund.ProceduralBlocks
             inverted2.inverted = true;
             procedural_incorner_2.RegisterLater();
 
-            var incorner3 = GameObjectJSON.MeshFromFile("Assets/Models/Procedural Inside Corner (3-way).obj");
+            var incorner3 = GameObjectJSON.MeshFromFile(Path.Combine(AssetsFolder, "Models/Procedural Inside Corner (3-way).obj"));
             incorner3.name = "ProceduralMesh";
             var procedural_incorner_3 = new BlockPrefabBuilder()
                 .SetBlockID(7010, "d85e864aad33b54a6028")
@@ -263,7 +263,7 @@ namespace Exund.ProceduralBlocks
             inverted3.inverted = true;
             procedural_incorner_3.RegisterLater();
 
-            var rounded_corner2 = GameObjectJSON.MeshFromFile("Assets/Models/Procedural Rounded Corner (2-way).obj");
+            var rounded_corner2 = GameObjectJSON.MeshFromFile(Path.Combine(AssetsFolder, "Models/Procedural Rounded Corner (2-way).obj"));
             rounded_corner2.name = "ProceduralMesh";
             var procedural_rounded_corner2 = new BlockPrefabBuilder()
                 .SetBlockID(7011, "ab23c00ba9ab31d27e04")
@@ -281,7 +281,7 @@ namespace Exund.ProceduralBlocks
             procedural_rounded_corner2.TankBlock.attachPoints = new Vector3[] { new Vector3(-0.5f, 0, 0), new Vector3(0, -0.5f, 0), new Vector3(0, 0, -0.5f) };
             procedural_rounded_corner2.RegisterLater();
 
-            var rounded_corner3 = GameObjectJSON.MeshFromFile("Assets/Models/Procedural Rounded Corner (3-way).obj");
+            var rounded_corner3 = GameObjectJSON.MeshFromFile(Path.Combine(AssetsFolder, "Models/Procedural Rounded Corner (3-way).obj"));
             rounded_corner3.name = "ProceduralMesh";
             var procedural_rounded_corner3 = new BlockPrefabBuilder()
                 .SetBlockID(7012, "9630f2a69c42c30c0862")
@@ -299,7 +299,7 @@ namespace Exund.ProceduralBlocks
             procedural_rounded_corner3.TankBlock.attachPoints = new Vector3[] { new Vector3(-0.5f, 0, 0), new Vector3(0, -0.5f, 0), new Vector3(0, 0, -0.5f) };
             procedural_rounded_corner3.RegisterLater();
 
-            var rounded_incorner2 = GameObjectJSON.MeshFromFile("Assets/Models/Procedural Inside Rounded Corner (2-way).obj");
+            var rounded_incorner2 = GameObjectJSON.MeshFromFile(Path.Combine(AssetsFolder, "Models/Procedural Inside Rounded Corner (2-way).obj"));
             rounded_incorner2.name = "ProceduralMesh";
             var procedural_rounded_incorner2 = new BlockPrefabBuilder()
                 .SetBlockID(7013, "2381cf216f226ed2f537")
@@ -318,7 +318,7 @@ namespace Exund.ProceduralBlocks
             invertedr2.inverted = true;
             procedural_rounded_incorner2.RegisterLater();
 
-            var rounded_incorner3 = GameObjectJSON.MeshFromFile("Assets/Models/Procedural Inside Rounded Corner (3-way).obj");
+            var rounded_incorner3 = GameObjectJSON.MeshFromFile(Path.Combine(AssetsFolder, "Models/Procedural Inside Rounded Corner (3-way).obj"));
             rounded_incorner3.name = "ProceduralMesh";
             var procedural_rounded_incorner3 = new BlockPrefabBuilder()
                 .SetBlockID(7014, "eadb1d61f1dc3e7f1fc9")

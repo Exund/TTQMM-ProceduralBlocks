@@ -21,6 +21,7 @@ namespace Exund.ProceduralBlocks
 		protected Vector3[] originalVertices;
 
         protected static FieldInfo FilledCellsGravityScaleFactors;
+        protected static FieldInfo m_LastFilledCellsGravityScaleFactors;
         protected static PropertyInfo ConnectedBlocksByAP;
         protected static FieldInfo m_BlockCellBounds;
         protected static MethodInfo CalculateDefaultPhysicsConstants;
@@ -32,8 +33,6 @@ namespace Exund.ProceduralBlocks
 
 		protected static FieldInfo SpawnContext_block;
         protected static FieldInfo SpawnContext_blockSpec;
-
-		protected SerialData prevData;
 
         private bool spawned = false;
 
@@ -50,13 +49,17 @@ namespace Exund.ProceduralBlocks
 
         static ModuleProcedural()
         {
-            FilledCellsGravityScaleFactors = typeof(TankBlock).GetField("FilledCellsGravityScaleFactors", BindingFlags.Instance | BindingFlags.NonPublic);
-            ConnectedBlocksByAP = typeof(TankBlock).GetProperty("ConnectedBlocksByAP");
-            m_BlockCellBounds = typeof(TankBlock).GetField("m_BlockCellBounds", BindingFlags.Instance | BindingFlags.NonPublic);//.First(f => f.Name.Contains("m_BlockCellBounds"));
-            CalculateDefaultPhysicsConstants = typeof(TankBlock).GetMethod("CalculateDefaultPhysicsConstants", BindingFlags.Instance | BindingFlags.NonPublic);
-			InitAPFilledCells = typeof(TankBlock).GetMethod("InitAPFilledCells", BindingFlags.Instance | BindingFlags.NonPublic);
-			m_PopulateTechBuffer = typeof(ManSpawn).GetField("m_PopulateTechBuffer", BindingFlags.NonPublic | BindingFlags.Instance);
-            var t = m_PopulateTechBuffer.FieldType;
+            var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+            var t = typeof(TankBlock);
+            FilledCellsGravityScaleFactors = t.GetField("FilledCellsGravityScaleFactors", flags);
+            m_LastFilledCellsGravityScaleFactors = t.GetField("m_LastFilledCellsGravityScaleFactors", flags);
+            ConnectedBlocksByAP = t.GetProperty("ConnectedBlocksByAP");
+            m_BlockCellBounds = t.GetField("m_BlockCellBounds", flags);//.First(f => f.Name.Contains("m_BlockCellBounds"));
+            CalculateDefaultPhysicsConstants = t.GetMethod("CalculateDefaultPhysicsConstants", flags);
+			InitAPFilledCells = t.GetMethod("InitAPFilledCells", flags);
+			m_PopulateTechBuffer = typeof(ManSpawn).GetField("m_PopulateTechBuffer", flags);
+            
+            t = m_PopulateTechBuffer.FieldType;
             bufferLength = t.GetField("Length", BindingFlags.Public | BindingFlags.Instance);
             GetValue = t.GetMethod("GetValue", new Type[] { typeof(int) });
 
@@ -88,6 +91,7 @@ namespace Exund.ProceduralBlocks
                     g[i] = 1f;
                 }
                 FilledCellsGravityScaleFactors.SetValue(base.block, g);
+                m_LastFilledCellsGravityScaleFactors.SetValue(base.block, g);
                 var bounds = new Bounds(Vector3.zero, Vector3.zero);
                 foreach (IntVector3 c in cells)
                 {
@@ -210,9 +214,9 @@ namespace Exund.ProceduralBlocks
                     var data = Module.SerialData<ModuleProcedural.SerialData>.Retrieve(blockSpec.saveState);
                     
                     if (base.block == bblock)
-                    {
-                        this.Size = data.size;
+                    { 
                         this.faces = data.faces ?? this.faces;
+                        this.Size = data.size;
                         this.inverted = data.inverted;
                         break;
                     }
@@ -309,12 +313,13 @@ namespace Exund.ProceduralBlocks
         private void OnSpawn()
         {
             if (originalMaxHealth == 0f) originalMaxHealth = base.block.damage.maxHealth;
+            this.Texture = "";
         }
 
         private void OnPool()
         {
-            base.block.serializeEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
-            base.block.serializeTextEvent.Subscribe(new Action<bool, TankPreset.BlockSpec>(this.OnSerialize));
+            base.block.serializeEvent.Subscribe(this.OnSerialize);
+            base.block.serializeTextEvent.Subscribe(this.OnSerialize);
         }
 
         private void OnRecycle()
@@ -343,7 +348,6 @@ namespace Exund.ProceduralBlocks
                 ModuleProcedural.SerialData serialData2 = Module.SerialData<ModuleProcedural.SerialData>.Retrieve(blockSpec.saveState);
                 if (serialData2 != null)
                 {
-					prevData = serialData2;
                     this.Size = serialData2.size;
 					this.Texture = serialData2.texture;
                 }

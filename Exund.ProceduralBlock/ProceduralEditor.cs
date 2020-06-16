@@ -20,17 +20,20 @@ namespace Exund.ProceduralBlocks
 		private string[] textures = new string[0];
 		private Vector2 scrollPos;
 
+        private float height = 500f;
+
 		private void Update()
         {
             if (!Singleton.Manager<ManPointer>.inst.DraggingItem && Input.GetMouseButtonDown(1))
             {
-                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - 500f, 400f, 500f);
+                win = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y - height, 400f, height);
+
 				hasColor = false;
                 try
                 {
                     var b = Singleton.Manager<ManPointer>.inst.targetVisible.block;
                     module = b.GetComponent<ModuleProcedural>();
-					hasColor = b.GetComponent<Exund.ColorBlock.ModuleColor>();
+					hasColor = b.GetComponent<ColorBlock.ModuleColor>();
                     x = module.Size.x;
                     y = module.Size.y;
                     z = module.Size.z;
@@ -53,8 +56,22 @@ namespace Exund.ProceduralBlocks
 
             try
             {
-                win = GUI.Window(ID, win, new GUI.WindowFunction(DoWindow), "Procedural Editor");
-				if(x * y * z < 256) module.Size = new IntVector3(x, y, z);
+                win.y += height;
+                height = 0f;
+                if (!module.block.IsAttached)
+                {
+                    height += GUI.skin.label.CalcSize(new GUIContent("X")).y * 3;
+                    height += GUI.skin.textField.CalcSize(new GUIContent("0")).y * 3;
+                    height += GUI.skin.toggle.CalcSize(new GUIContent("T")).y * module.faces.Count;
+                }
+                height += GUI.skin.label.CalcSize(new GUIContent(module.Texture)).y;
+                height += Math.Min(200f, GUI.skin.button.CalcSize(new GUIContent("G")).y * textures.Length);
+                height += GUI.skin.button.CalcSize(new GUIContent("Close")).y;
+
+                win.y -= height;
+                win.height = height;
+                win = GUI.Window(ID, win, DoWindow, "Procedural Editor");
+				module.Size = new IntVector3(x, y, z);  
             }
             catch (Exception e)
             {
@@ -68,20 +85,24 @@ namespace Exund.ProceduralBlocks
 			{
 				GUILayout.Label("X");
 				int.TryParse(GUILayout.TextField(x.ToString()), out x);
+                x = Math.Min(64, x);
 				GUILayout.Label("Y");
 				int.TryParse(GUILayout.TextField(y.ToString()), out y);
-				GUILayout.Label("Z");
+                y = Math.Min(64, y);
+                GUILayout.Label("Z");
 				int.TryParse(GUILayout.TextField(z.ToString()), out z);
+                z = Math.Min(64, z);
 
-				for (int i = 0; i < module.faces.Count; i++)
+                for (int i = 0; i < module.faces.Count; i++)
 				{
 					var face = module.faces.Keys.ElementAt(i);
 					module.faces[face] = GUILayout.Toggle(module.faces[face], face.ToString());
-				}
+				}         
 			}
 
 			GUILayout.Label(module.Texture);
-			scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.MaxHeight(200f));
+            
+            scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.MaxHeight(200f)); 
 			foreach (var texture in textures)
 			{
 				if (GUILayout.Button(texture, new GUIStyle(GUI.skin.button) { richText = true, alignment = TextAnchor.MiddleLeft }))
@@ -90,14 +111,14 @@ namespace Exund.ProceduralBlocks
 
 					if(hasColor)
 					{
-						var c = module.block.GetComponent<Exund.ColorBlock.ModuleColor>();
+						var c = module.block.GetComponent<ColorBlock.ModuleColor>();
 						c.Color = Color.white;
 						c.active = module.Texture == "";
 					}
 				}
-			}
+			}   
 			GUILayout.EndScrollView();
-
+            
             if (GUILayout.Button("Close"))
             {
                 visible = false;
