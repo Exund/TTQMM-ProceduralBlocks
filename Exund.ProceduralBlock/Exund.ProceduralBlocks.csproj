@@ -106,57 +106,113 @@
     <Compile Include="ModuleProceduralRoundedHalfBlock.cs" />
     <Compile Include="ModuleProceduralHalfBlock.cs" />
     <Compile Include="ModuleProceduralCylinder.cs" />
+    <Compile Include="ModuleProceduralSlicedMesh.cs" />
     <Compile Include="ProceduralBlockMod.cs" />
     <Compile Include="ProceduralEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Models\Procedural Block.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Block.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Corner %282-way%29.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Corner %282-way%29.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Corner %283-way%29.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Corner %283-way%29.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Cylinder-Cube Converter.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Cylinder-Cube Converter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Cylinder.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Cylinder.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Half Block.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Half Block.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Inside Corner %282-way%29.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Inside Corner %282-way%29.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Inside Corner %283-way%29.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Inside Corner %283-way%29.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Inside Corner Filled %283-way%29.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Inside Corner Filled %283-way%29.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Inside Rounded Corner %282-way%29.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Inside Rounded Corner %282-way%29.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Inside Rounded Corner %283-way%29.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Inside Rounded Corner %283-way%29.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Inside Rounded Corner Filled %283-way%29.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Inside Rounded Corner Filled %283-way%29.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Rounded Corner %282-way%29.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Rounded Corner %282-way%29.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Rounded Corner %283-way%29.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Rounded Corner %283-way%29.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Rounded Half Block.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Rounded Half Block.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Procedural Sphere.obj">
+    <Content Include="Assets\Models\Standalone\Procedural Sphere.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\AP.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Assets\Models\PartSets\BF_Chassis\BF_Chassis_Parts.blend" />
+    <None Include="Assets\Models\PartSets\BF_Default\BF_Default_Parts.blend" />
+    <None Include="Assets\Models\PartSets\BF_Faired\BF_Faired_Parts.blend" />
+    <Content Include="Assets\Models\PartSets\BF_Faired\Corner_Bottom.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\BF_Faired\Corner_Top.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\BF_Faired\Edge_Bottom.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\BF_Faired\Edge_Middle.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\BF_Faired\Edge_Top.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\BF_Faired\Face_Bottom.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\BF_Faired\Face_Middle.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\BF_Faired\Face_Top.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Assets\Models\PartSets\GC\GC_Parts.blend" />
+    <Content Include="Assets\Models\PartSets\BF_Default\Corner.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\BF_Default\Edge.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\BF_Default\Face.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GC\Corner.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GC\Edge.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GC\Edge_V.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GC\Face.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GC\Face_V.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="mod.json">
@@ -179,10 +235,12 @@
     <Content Include="Assets\Textures\HEProceduralBlockTex.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\Textures\RRProceduralBlockTex.png" />
     <Content Include="Assets\Textures\VentureProceduralBlockTex.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetDir) "D:\Program Files\Steam\steamapps\common\TerraTech\QMods\$(TargetName)" /Y;

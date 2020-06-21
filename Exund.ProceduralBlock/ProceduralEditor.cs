@@ -19,6 +19,7 @@ namespace Exund.ProceduralBlocks
 
 		private string[] textures = new string[0];
 		private Vector2 scrollPos;
+        private Vector2 scrollPos2;
 
         private float height = 500f;
 
@@ -62,11 +63,16 @@ namespace Exund.ProceduralBlocks
                 {
                     height += GUI.skin.label.CalcSize(new GUIContent("X")).y * 3;
                     height += GUI.skin.textField.CalcSize(new GUIContent("0")).y * 3;
-                    height += GUI.skin.toggle.CalcSize(new GUIContent("T")).y * module.faces.Count;
+                    height += GUI.skin.toggle.CalcSize(new GUIContent("T")).y * module.Faces.Count;
                 }
                 height += GUI.skin.label.CalcSize(new GUIContent(module.Texture)).y;
                 height += Math.Min(200f, GUI.skin.button.CalcSize(new GUIContent("G")).y * textures.Length);
                 height += GUI.skin.button.CalcSize(new GUIContent("Close")).y;
+                if(module is ModuleProceduralSlicedMesh)
+                {
+                    height += GUI.skin.label.CalcSize(new GUIContent("A")).y;
+                    height += Math.Min(200f, GUI.skin.button.CalcSize(new GUIContent("G")).y * ModuleProceduralSlicedMesh.SlicedMeshes.Count);
+                } 
 
                 win.y -= height;
                 win.height = height;
@@ -93,15 +99,15 @@ namespace Exund.ProceduralBlocks
 				int.TryParse(GUILayout.TextField(z.ToString()), out z);
                 z = Math.Min(64, z);
 
-                for (int i = 0; i < module.faces.Count; i++)
+                var faces = module.Faces;
+                foreach(var kv in module.Faces)
 				{
-					var face = module.faces.Keys.ElementAt(i);
-					module.faces[face] = GUILayout.Toggle(module.faces[face], face.ToString());
-				}         
+					faces[kv.Key] = GUILayout.Toggle(kv.Value, kv.Key.ToString());
+				}
+                module.Faces = faces;
 			}
 
 			GUILayout.Label(module.Texture);
-            
             scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.MaxHeight(200f)); 
 			foreach (var texture in textures)
 			{
@@ -118,6 +124,20 @@ namespace Exund.ProceduralBlocks
 				}
 			}   
 			GUILayout.EndScrollView();
+
+            if(module is ModuleProceduralSlicedMesh mpsm)
+            {
+                GUILayout.Label(mpsm.SlicedMeshName);
+                scrollPos2 = GUILayout.BeginScrollView(scrollPos2, GUILayout.MaxHeight(200f));
+                foreach (var k in ModuleProceduralSlicedMesh.SlicedMeshes.Keys)
+                {
+                    if (GUILayout.Button(k, new GUIStyle(GUI.skin.button) { richText = true, alignment = TextAnchor.MiddleLeft }))
+                    {
+                        mpsm.SlicedMeshName = k;
+                    }
+                }
+                GUILayout.EndScrollView();
+            }
             
             if (GUILayout.Button("Close"))
             {

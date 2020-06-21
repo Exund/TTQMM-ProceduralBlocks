@@ -258,3 +258,6 @@ paket-files/
 __pycache__/
 *.pyc
 /Exund.ProceduralBlock/bin/Exund.ProceduralBlocks/Assets/Models.zip
+/Exund.ProceduralBlock/Assets/Models/Models
+*.blend1
+*.blend

@@ -9,17 +9,6 @@ namespace Exund.ProceduralBlocks
 {
     public class ModuleProcedural : Module
     {
-        protected bool deserializing = false;
-        protected List<IntVector3> cells = new List<IntVector3> { IntVector3.zero };
-        protected List<Vector3> aps = new List<Vector3>();
-        protected IntVector3 size = IntVector3.one;
-        protected float originalMaxHealth;
-        protected virtual float MassScaler => 1f;
-        protected virtual float HealthScaler => MassScaler;
-		protected string texture = "";
-
-		protected Vector3[] originalVertices;
-
         protected static FieldInfo FilledCellsGravityScaleFactors;
         protected static FieldInfo m_LastFilledCellsGravityScaleFactors;
         protected static PropertyInfo ConnectedBlocksByAP;
@@ -28,15 +17,27 @@ namespace Exund.ProceduralBlocks
         protected static FieldInfo m_PopulateTechBuffer;
         protected static FieldInfo bufferLength;
         protected static MethodInfo GetValue;
-		protected static MethodInfo InitAPFilledCells;
+        protected static MethodInfo InitAPFilledCells;
+        protected static FieldInfo m_DefaultInertiaTensor;
 
-
-		protected static FieldInfo SpawnContext_block;
+        protected static FieldInfo SpawnContext_block;
         protected static FieldInfo SpawnContext_blockSpec;
 
+
+        protected bool deserializing = false;
+        protected List<IntVector3> cells = new List<IntVector3> { IntVector3.zero };
+        protected List<Vector3> aps = new List<Vector3>();
+        protected IntVector3 size = IntVector3.one;
+        protected float originalMaxHealth;
+        protected virtual float MassScaler => 1f;
+        protected virtual float HealthScaler => MassScaler;
+        protected string texture = "";
+        protected float originalMass = 0;
+
+        protected Vector3[] originalVertices;
         private bool spawned = false;
 
-        public Dictionary<Face, bool> faces = new Dictionary<Face, bool>() {
+        protected Dictionary<Face, bool> faces = new Dictionary<Face, bool>() {
             {Face.Top, true },
             {Face.Bottom, true },
             {Face.Left, true },
@@ -45,7 +46,7 @@ namespace Exund.ProceduralBlocks
             {Face.Back, true }
         };
 
-        public bool inverted = false;
+        internal bool inverted = false;
 
         static ModuleProcedural()
         {
@@ -56,9 +57,10 @@ namespace Exund.ProceduralBlocks
             ConnectedBlocksByAP = t.GetProperty("ConnectedBlocksByAP");
             m_BlockCellBounds = t.GetField("m_BlockCellBounds", flags);//.First(f => f.Name.Contains("m_BlockCellBounds"));
             CalculateDefaultPhysicsConstants = t.GetMethod("CalculateDefaultPhysicsConstants", flags);
-			InitAPFilledCells = t.GetMethod("InitAPFilledCells", flags);
-			m_PopulateTechBuffer = typeof(ManSpawn).GetField("m_PopulateTechBuffer", flags);
-            
+            InitAPFilledCells = t.GetMethod("InitAPFilledCells", flags);
+            m_DefaultInertiaTensor = t.GetField("m_DefaultInertiaTensor", flags);
+            m_PopulateTechBuffer = typeof(ManSpawn).GetField("m_PopulateTechBuffer", flags);
+
             t = m_PopulateTechBuffer.FieldType;
             bufferLength = t.GetField("Length", BindingFlags.Public | BindingFlags.Instance);
             GetValue = t.GetMethod("GetValue", new Type[] { typeof(int) });
@@ -125,16 +127,16 @@ namespace Exund.ProceduralBlocks
 
                 if (!faces[Face.Top]) value.RemoveAll(v => v.y == size.y - 0.5f);
                 if (!faces[Face.Bottom]) value.RemoveAll(v => v.y == -0.5f);
-                if (!faces[Face.Left]) value.RemoveAll(v => v.z == size.z - 0.5f);
-                if (!faces[Face.Right]) value.RemoveAll(v => v.z == -0.5f);
-                if (!faces[Face.Front]) value.RemoveAll(v => v.x == size.x - 0.5f);
-                if (!faces[Face.Back]) value.RemoveAll(v => v.x == -0.5f);
+                if (!faces[Face.Front]) value.RemoveAll(v => v.z == size.z - 0.5f);
+                if (!faces[Face.Back]) value.RemoveAll(v => v.z == -0.5f);
+                if (!faces[Face.Right]) value.RemoveAll(v => v.x == size.x - 0.5f);
+                if (!faces[Face.Left]) value.RemoveAll(v => v.x == -0.5f);
 
                 aps = value;
                 base.block.attachPoints = aps.ToArray();
-                
+
                 ConnectedBlocksByAP.SetValue(base.block, new TankBlock[aps.Count], null);
-				InitAPFilledCells.Invoke(base.block, new object[0]);
+                InitAPFilledCells.Invoke(base.block, new object[0]);
             }
         }
 
@@ -146,10 +148,14 @@ namespace Exund.ProceduralBlocks
             }
             set
             {
-                if (value.x * value.y * value.z > 255) return;
-                if (value.x < 1) value.x = 1;
-                if (value.y < 1) value.y = 1;
-                if (value.z < 1) value.z = 1;
+                if (base.block.IsAttached) return;
+
+                value.x = Mathf.Clamp(value.x, 1, 64);
+                value.y = Mathf.Clamp(value.y, 1, 64);
+                value.z = Mathf.Clamp(value.z, 1, 64);
+
+                if (value == size) return;
+
                 size = value;
                 GenerateCellsAPs();
                 GenerateMesh();
@@ -158,6 +164,8 @@ namespace Exund.ProceduralBlocks
                 APs = aps;
 
                 CalculateDefaultPhysicsConstants.Invoke(base.block, null);
+                m_DefaultInertiaTensor.SetValue(base.block, base.block.CurrentInertiaTensor);
+                base.block.rbody.inertiaTensor = base.block.CurrentInertiaTensor;
             }
         }
 
@@ -196,7 +204,45 @@ namespace Exund.ProceduralBlocks
 			}
 		}
 
-        public void BeforeBlockAdded(IntVector3 localPos)
+        public Dictionary<Face, bool> Faces
+        {
+            get
+            {
+                return new Dictionary<Face, bool>(faces);
+            }
+            set
+            {
+                if (base.block.IsAttached) return;
+                var changed = false;
+                foreach (var kv in value)
+                {
+                    if(faces[kv.Key] != kv.Value)
+                    {
+                        faces[kv.Key] = kv.Value;
+                        changed = true;
+                    }
+                }
+
+                if (changed)
+                {
+                    GenerateCellsAPs();
+                    GenerateMesh();
+                    APs = aps;
+                }
+            }
+        }
+
+        public void EnableFace(Face face, bool enabled)
+        {
+            var old = faces[face];
+            if(old != enabled)
+            {
+                faces[face] = enabled;
+                GenerateMesh();
+            }
+        }
+
+        public virtual void BeforeBlockAdded(IntVector3 localPos)
         {
             if (spawned) return;
             var serializationBuffer = (Array)m_PopulateTechBuffer.GetValue(ManSpawn.inst);
@@ -241,27 +287,27 @@ namespace Exund.ProceduralBlocks
                     {
                         cells.Add(new IntVector3(x, y, z));
                                               
-                        if (x == 0)
+                        if (x == 0 && faces[Face.Left])
                         {
                             aps.Add(new Vector3(-0.5f, y, z));
                         }
-                        if (x == size.x - 1)
+                        if (x == size.x - 1 && faces[Face.Right])
                         {
                             aps.Add(new Vector3(x + 0.5f, y, z));
                         }
-                        if (y == 0)
+                        if (y == 0 && faces[Face.Bottom])
                         {
                             aps.Add(new Vector3(x, -0.5f, z));
                         }
-                        if (y == size.y - 1)
+                        if (y == size.y - 1 && faces[Face.Top])
                         {
                             aps.Add(new Vector3(x, y + 0.5f, z));
                         }
-                        if (z == 0)
+                        if (z == 0 && faces[Face.Back])
                         {
                             aps.Add(new Vector3(x, y, -0.5f));
                         }
-                        if (z == size.z - 1)
+                        if (z == size.z - 1 && faces[Face.Front])
                         {
                             aps.Add(new Vector3(x, y, z + 0.5f));
                         }                      
@@ -298,7 +344,11 @@ namespace Exund.ProceduralBlocks
 
         protected virtual void GenerateProperties()
         {
-            base.block.ChangeMass(base.block.m_DefaultMass * this.size.x * this.size.y * this.size.z * this.MassScaler);
+            var mass = originalMass * this.size.x * this.size.y * this.size.z * this.MassScaler;
+            base.block.ChangeMass(mass);
+            base.block.m_DefaultMass = mass;
+            base.block.rbody.mass = mass;
+            
             var healthScale = this.size.x * this.size.y * this.size.z * this.HealthScaler;
 
             var maxHealth = originalMaxHealth * healthScale;
@@ -318,8 +368,10 @@ namespace Exund.ProceduralBlocks
 
         private void OnPool()
         {
+            if(originalMass == 0) originalMass = base.block.m_DefaultMass;
             base.block.serializeEvent.Subscribe(this.OnSerialize);
             base.block.serializeTextEvent.Subscribe(this.OnSerialize);
+            GenerateMesh();
         }
 
         private void OnRecycle()
