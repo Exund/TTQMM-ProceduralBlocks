@@ -347,7 +347,9 @@
     <Content Include="Assets\Textures\HEProceduralBlockTex.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Textures\RRProceduralBlockTex.png" />
+    <Content Include="Assets\Textures\RRProceduralBlockTex.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\Textures\VentureProceduralBlockTex.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
