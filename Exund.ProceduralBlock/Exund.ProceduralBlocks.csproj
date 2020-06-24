@@ -177,7 +177,9 @@
     <Content Include="Assets\Models\PartSets\BF_Chassis\Face.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Assets\Models\PartSets\BF_Default\BF.json" />
+    <Content Include="Assets\Models\PartSets\BF_Default\BF.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Assets\Models\PartSets\BF_Default\BF_Default_Parts.blend" />
     <Content Include="Assets\Models\PartSets\BF_Faired\BF_Faired.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
