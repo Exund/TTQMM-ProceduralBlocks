@@ -279,6 +279,39 @@ namespace Exund.ProceduralBlocks
             collider.center = (collider.size - Vector3.one) / 2f;
         }
 
+        protected override void OnPool()
+        {
+            base.OnPool();
+            base.block.serializeEvent.Subscribe(this.OnSerializeSliced);
+            base.block.serializeTextEvent.Subscribe(this.OnSerializeSliced);
+        }
+
+        private void OnSerializeSliced(bool saving, TankPreset.BlockSpec blockSpec)
+        {
+            if (saving)
+            {
+                var serialData = new ModuleProceduralSlicedMesh.SerialData()
+                {
+                    slicedMeshName = slicedMeshName
+                };
+                serialData.Store(blockSpec.saveState);
+            }
+            else
+            {
+                var serialData2 = Module.SerialData<ModuleProceduralSlicedMesh.SerialData>.Retrieve(blockSpec.saveState);
+                if (serialData2 != null)
+                {
+                    this.SlicedMeshName = serialData2.slicedMeshName;
+                }
+            }
+        }
+
+        [Serializable]
+        public new class SerialData : Module.SerialData<ModuleProceduralSlicedMesh.SerialData>
+        {
+            public string slicedMeshName;
+        }
+
         public struct Matrix4x4Alt
         {
             public Vector3 translation;

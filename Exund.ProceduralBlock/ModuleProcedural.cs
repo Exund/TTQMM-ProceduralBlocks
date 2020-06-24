@@ -366,7 +366,7 @@ namespace Exund.ProceduralBlocks
             this.Texture = "";
         }
 
-        private void OnPool()
+        protected virtual void OnPool()
         {
             if(originalMass == 0) originalMass = base.block.m_DefaultMass;
             base.block.serializeEvent.Subscribe(this.OnSerialize);
