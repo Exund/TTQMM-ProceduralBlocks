@@ -357,6 +357,8 @@ namespace Exund.ProceduralBlocks
             procedural_mesh_block.RegisterLater();
 
             if (!Directory.Exists(TechArtFolder)) Directory.CreateDirectory(TechArtFolder);
+
+            SlicedMeshJSON.LoadSets();
         }
 
         public static bool PointInTriangle(Vector2 p, Vector2 p0, Vector2 p1, Vector2 p2)

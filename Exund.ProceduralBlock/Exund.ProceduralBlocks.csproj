@@ -110,6 +110,7 @@
     <Compile Include="ProceduralBlockMod.cs" />
     <Compile Include="ProceduralEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SlicedMeshJSON.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Models\Standalone\Procedural Block.obj">
@@ -163,8 +164,24 @@
     <Content Include="Assets\Models\PartSets\AP.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\Models\PartSets\BF_Chassis\BF_Chassis.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Assets\Models\PartSets\BF_Chassis\BF_Chassis_Parts.blend" />
+    <Content Include="Assets\Models\PartSets\BF_Chassis\Corner.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\BF_Chassis\Edge.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\BF_Chassis\Face.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Assets\Models\PartSets\BF_Default\BF.json" />
     <None Include="Assets\Models\PartSets\BF_Default\BF_Default_Parts.blend" />
+    <Content Include="Assets\Models\PartSets\BF_Faired\BF_Faired.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Assets\Models\PartSets\BF_Faired\BF_Faired_Parts.blend" />
     <Content Include="Assets\Models\PartSets\BF_Faired\Corner_Bottom.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -188,6 +205,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Models\PartSets\BF_Faired\Face_Top.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GC\GC.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Assets\Models\PartSets\GC\GC_Parts.blend" />
@@ -215,6 +235,95 @@
     <Content Include="Assets\Models\PartSets\GC\Face_V.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\Models\PartSets\HE\Corner.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\HE\Edge.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\HE\Face.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\HE\HE.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GSO_Alt\Corner.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GSO_Alt\Edge.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GSO_Alt\Edge_V.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GSO_Alt\Face.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GSO_Alt\Face_V.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GSO_Alt\GSO.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GSO\Corner.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GSO\Edge.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GSO\Edge_V.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GSO\Face.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GSO\Face_V.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\GSO\GSO.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Assets\Models\PartSets\GSO\GSO_Parts.blend" />
+    <None Include="Assets\Models\PartSets\GSO_Alt\GSO_Parts.blend" />
+    <None Include="Assets\Models\PartSets\HE\HE_Parts.blend" />
+    <Content Include="Assets\Models\PartSets\RR_Default\RR.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\RR_Default\Corner.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\RR_Default\Edge.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\RR_Default\Edge_V.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\RR_Default\Face.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\RR_Default\Face_V.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\RR_Armored\Corner.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\RR_Armored\Edge.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\RR_Armored\Edge_V.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\RR_Armored\Face.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\RR_Armored\Face_V.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Models\PartSets\RR_Armored\RR.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Assets\Models\PartSets\RR_Armored\RR_Armored_Parts.blend" />
+    <None Include="Assets\Models\PartSets\RR_Default\RR_Default_Parts.blend" />
     <None Include="mod.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -229,6 +338,7 @@
     <Content Include="Assets\Textures\GCProceduralBlocksTex.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\Textures\GSOProceduralBlockTex.old.png" />
     <Content Include="Assets\Textures\GSOProceduralBlockTex.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

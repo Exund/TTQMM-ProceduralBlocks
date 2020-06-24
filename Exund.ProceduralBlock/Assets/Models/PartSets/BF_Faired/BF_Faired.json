@@ -1,0 +1,13 @@
+{
+    "TopMiddleBottom": {
+        "name":  "BF Block Faired",
+        "CornerBottom": "Corner_Bottom.obj",
+        "CornerTop": "Corner_Top.obj",
+        "EdgeBottom": "Edge_Bottom.obj",
+        "EdgeMiddle": "Edge_Middle.obj",
+        "EdgeTop": "Edge_Top.obj",
+        "FaceBottom": "Face_Bottom.obj",
+        "FaceMiddle": "Face_Middle.obj",
+        "FaceTop": "Face_Top.obj"
+    }
+}
