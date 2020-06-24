@@ -1,0 +1,10 @@
+{
+    "Extended": {
+        "name":  "RR Armored Block",
+        "Corner": "Corner.obj",
+        "VerticalEdge": "Edge_V.obj",
+        "HorizontalEdge": "Edge.obj",
+        "VerticalFace": "Face_V.obj",
+        "HorizontalFace": "Face.obj"
+    }
+}

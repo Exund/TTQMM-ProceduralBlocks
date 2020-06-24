@@ -1,0 +1,8 @@
+{
+    "Minimal": {
+        "name": "HE Block",
+        "Corner": "Corner.obj",
+        "Edge": "Edge.obj",
+        "Face":  "Face.obj"
+    }
+}
