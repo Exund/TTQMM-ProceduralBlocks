@@ -286,6 +286,12 @@ namespace Exund.ProceduralBlocks
             base.block.serializeTextEvent.Subscribe(this.OnSerializeSliced);
         }
 
+        protected override void OnRecycle()
+        {
+            base.OnRecycle();
+            SlicedMeshName = SlicedMeshes.Keys.First();
+        }
+
         private void OnSerializeSliced(bool saving, TankPreset.BlockSpec blockSpec)
         {
             if (saving)

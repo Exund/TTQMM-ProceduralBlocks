@@ -244,7 +244,7 @@ namespace Exund.ProceduralBlocks
 
         public virtual void BeforeBlockAdded(IntVector3 localPos)
         {
-            if (spawned) return;
+            if (spawned || !base.block) return;
             var serializationBuffer = (Array)m_PopulateTechBuffer.GetValue(ManSpawn.inst);
             
             try
@@ -344,20 +344,24 @@ namespace Exund.ProceduralBlocks
 
         protected virtual void GenerateProperties()
         {
-            var mass = originalMass * this.size.x * this.size.y * this.size.z * this.MassScaler;
-            base.block.ChangeMass(mass);
-            base.block.m_DefaultMass = mass;
-            base.block.rbody.mass = mass;
-            
-            var healthScale = this.size.x * this.size.y * this.size.z * this.HealthScaler;
+            try
+            {
+                var mass = originalMass * this.size.x * this.size.y * this.size.z * this.MassScaler;
+                base.block.ChangeMass(mass);
+                base.block.m_DefaultMass = mass;
+                base.block.rbody.mass = mass;
 
-            var maxHealth = originalMaxHealth * healthScale;
-            base.block.damage.maxHealth = (int)maxHealth;
+                var healthScale = this.size.x * this.size.y * this.size.z * this.HealthScaler;
 
-            var damageable = base.block.visible.damageable;
-            var healed = damageable.IsAtFullHealth;
-            damageable.SetMaxHealth(maxHealth);
-            if (healed) damageable.InitHealth(-1337f);
+                var maxHealth = originalMaxHealth * healthScale;
+                base.block.damage.maxHealth = (int)maxHealth;
+
+                var damageable = base.block.visible.damageable;
+                var healed = damageable.IsAtFullHealth;
+                damageable.SetMaxHealth(maxHealth);
+                if (healed) damageable.InitHealth(-1337f);
+            }
+            catch { }
         }   
 
         private void OnSpawn()
@@ -374,7 +378,7 @@ namespace Exund.ProceduralBlocks
             GenerateMesh();
         }
 
-        private void OnRecycle()
+        protected virtual void OnRecycle()
         {
             this.Size = IntVector3.one;
 			this.Texture = "";
