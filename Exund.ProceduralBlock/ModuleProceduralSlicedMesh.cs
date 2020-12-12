@@ -15,7 +15,7 @@ namespace Exund.ProceduralBlocks
 
         public static readonly Dictionary<string, SlicedMesh> SlicedMeshes = new Dictionary<string, SlicedMesh>();
 
-        private string slicedMeshName = SlicedMeshes.Keys.First();
+        private string slicedMeshName = SlicedMeshes.Keys.FirstOrDefault();
 
         public string SlicedMeshName
         {
@@ -57,7 +57,6 @@ namespace Exund.ProceduralBlocks
 
         protected override void GenerateMesh()
         {
-            var meshFilter = base.block.GetComponentsInChildren<MeshFilter>().FirstOrDefault(mf => mf.sharedMesh.name == "ProceduralMesh");
             if (!meshFilter) return;
 
             var mesh = Instantiate(meshFilter.sharedMesh);

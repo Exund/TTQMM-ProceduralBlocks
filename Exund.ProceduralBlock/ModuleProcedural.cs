@@ -23,6 +23,9 @@ namespace Exund.ProceduralBlocks
         protected static FieldInfo SpawnContext_block;
         protected static FieldInfo SpawnContext_blockSpec;
 
+        protected MeshRenderer meshRenderer;
+        protected MeshFilter meshFilter;
+        protected MeshCollider meshCollider;
 
         protected bool deserializing = false;
         protected List<IntVector3> cells = new List<IntVector3> { IntVector3.zero };
@@ -177,7 +180,6 @@ namespace Exund.ProceduralBlocks
 			}
 			set
 			{
-				var meshRenderer = base.block.GetComponentsInChildren<MeshRenderer>().FirstOrDefault(mr => mr.material.name.Contains("ProceduralMaterial"));
 				if (!meshRenderer) return;
 
 				if (value == "" || !value.EndsWith(".png"))
@@ -318,8 +320,6 @@ namespace Exund.ProceduralBlocks
 
         protected virtual void GenerateMesh()
         {
-            var meshFilter = base.block.GetComponentsInChildren<MeshFilter>().FirstOrDefault(mf => mf.sharedMesh.name == "ProceduralMesh");
-            var meshCollider = base.block.GetComponentsInChildren<MeshCollider>().FirstOrDefault(mf => mf.sharedMesh.name == "ProceduralMesh");
 			if (!meshFilter) return;
 
             var mesh = Instantiate(meshFilter.sharedMesh);
@@ -362,7 +362,14 @@ namespace Exund.ProceduralBlocks
                 if (healed) damageable.InitHealth(-1337f);
             }
             catch { }
-        }   
+        }
+
+        private void Start()
+        {
+            meshRenderer = base.block.GetComponentsInChildren<MeshRenderer>().FirstOrDefault(mr => mr.material.name.Contains("ProceduralMaterial"));
+            meshFilter = base.block.GetComponentsInChildren<MeshFilter>().FirstOrDefault(mf => mf.sharedMesh.name == "ProceduralMesh");
+            meshCollider = base.block.GetComponentsInChildren<MeshCollider>().FirstOrDefault(mf => mf.sharedMesh.name == "ProceduralMesh");
+        }
 
         private void OnSpawn()
         {

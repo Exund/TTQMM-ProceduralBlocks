@@ -36,9 +36,9 @@ namespace Exund.ColorBlock
                             renderer.material.color = this.color;
                         }
                     }*/
-                    var t = new Texture2D(1, 1);
-                    t.SetPixel(0, 0, this.color);
-                    base.block.GetComponentInChildren<MeshRenderer>().material.mainTexture = t;
+                    //var t = new Texture2D(1, 1);
+                    //t.SetPixel(0, 0, this.color);
+                    //base.block.GetComponentInChildren<MeshRenderer>().material.mainTexture = t;
                     base.block.GetComponentInChildren<MeshRenderer>().material.color = this.color;
                 } catch (Exception e)
                 {
