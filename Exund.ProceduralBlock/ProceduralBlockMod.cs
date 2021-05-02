@@ -44,11 +44,15 @@ namespace Exund.ProceduralBlocks
 			{
 				img2TechKeycode = img2TechKey.SavedValue;
 				config["img2TechKeycode"] = (int)img2TechKeycode;
-				config.WriteConfigJsonFile();
 			});
 
+            NativeOptionsMod.onOptionsSaved.AddListener(() =>
+            {
+                config.WriteConfigJsonFile();
+            });
 
-			var harmony = HarmonyInstance.Create("exund.prodcedural.blocks");
+
+            var harmony = HarmonyInstance.Create("exund.prodcedural.blocks");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
 
             _holder = new GameObject();
