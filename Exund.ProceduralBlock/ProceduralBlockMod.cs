@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 using Nuterra.BlockInjector;
-using Harmony;
+using HarmonyLib;
 using Exund.ColorBlock;
 using ModHelper.Config;
 using Nuterra.NativeOptions;
@@ -52,7 +52,7 @@ namespace Exund.ProceduralBlocks
             });
 
 
-            var harmony = HarmonyInstance.Create("exund.prodcedural.blocks");
+            var harmony = new Harmony("exund.prodcedural.blocks");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
 
             _holder = new GameObject();
