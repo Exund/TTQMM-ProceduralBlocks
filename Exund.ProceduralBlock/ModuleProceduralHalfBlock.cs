@@ -31,8 +31,7 @@ namespace Exund.ProceduralBlocks
                         }
                         if (z == 0 || z == size.z - 1)
                         {
-                            var s = Math.Min(size.x, size.y);
-                            if((x + y + 1) <= s)
+                            if(ProceduralBlocksMod.PointInRectangleTriangle(x + 0.5f, y + 0.5f, size.x, size.y))
                             {
                                 if (z == 0) aps.Add(new Vector3(x, y, -0.5f));
                                 if (z == size.z - 1) aps.Add(new Vector3(x, y, z + 0.5f));

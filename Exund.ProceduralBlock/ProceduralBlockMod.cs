@@ -131,7 +131,7 @@ namespace Exund.ProceduralBlocks
                 .SetFaction(FactionSubTypes.EXP)
                 .SetCategory(BlockCategories.Standard)
                 .SetGrade()
-                .SetHP(250/2)
+                .SetHP(250)
                 .SetMass(1)
                 .SetModel(half, half, true, mat)
                 .SetSize(IntVector3.one)
@@ -167,7 +167,7 @@ namespace Exund.ProceduralBlocks
                 .SetFaction(FactionSubTypes.EXP)
                 .SetCategory(BlockCategories.Standard)
                 .SetGrade()
-                .SetHP(250/3)
+                .SetHP(250)
                 .SetMass(1)
                 .SetModel(corner3, corner3, true, mat)
                 .SetSize(IntVector3.one)
@@ -185,7 +185,7 @@ namespace Exund.ProceduralBlocks
                 .SetFaction(FactionSubTypes.EXP)
                 .SetCategory(BlockCategories.Standard)
                 .SetGrade()
-                .SetHP(250 / 2)
+                .SetHP(250)
                 .SetMass(1)
                 .SetModel(rounded, rounded, true, mat)
                 .SetSize(IntVector3.one)
@@ -257,7 +257,7 @@ namespace Exund.ProceduralBlocks
                 .SetFaction(FactionSubTypes.EXP)
                 .SetCategory(BlockCategories.Standard)
                 .SetGrade()
-                .SetHP(250 / 3)
+                .SetHP(250)
                 .SetMass(1)
                 .SetModel(incorner3, incorner3, true, mat)
                 .SetSize(IntVector3.one)
@@ -365,14 +365,14 @@ namespace Exund.ProceduralBlocks
             SlicedMeshJSON.LoadSets();
         }
 
-        public static bool PointInTriangle(Vector2 p, Vector2 p0, Vector2 p1, Vector2 p2)
+        public static bool PointInEllipse(float x, float y, float a, float b)
         {
-            var A = 1 / 2 * (-p1.y * p2.x + p0.y * (-p1.x + p2.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y);
-            var sign = A < 0 ? -1 : 1;
-            var s = (p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y) * sign;
-            var t = (p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y) * sign;
+            return Mathf.Pow(x - a, 2) * b * b + Mathf.Pow(y - b, 2) * a * a <= a * a * b * b;
+        }
 
-            return s > 0 && t > 0 && (s + t) < 2 * A * sign;
+        public static bool PointInRectangleTriangle(float x, float y, float a, float b)
+        {
+            return x * b + y * a <= a * b;
         }
 
         public static Color ColorField(Color c)

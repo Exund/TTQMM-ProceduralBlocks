@@ -24,35 +24,17 @@ namespace Exund.ProceduralBlocks
                         {
                             if (x == 0)
                             {
-                                var p = new Vector2(y, z);
-                                var p0 = Vector2.zero;
-                                var p1 = new Vector2(size.y, 0);
-                                var p2 = new Vector2(0, size.z);
-                                var s = Math.Min(size.y, size.z);
-                                if ((y + z + 1) <= s)
-                                //if (ProceduralBlocksMod.PointInTriangle(p, p0, p1, p2))
+                                if(ProceduralBlocksMod.PointInRectangleTriangle(y + 0.5f, z + 0.5f, size.y, size.z))
                                     aps.Add(new Vector3(-0.5f, y, z));
                             }
                             if (y == 0)
                             {
-                                var p = new Vector2(x, z);
-                                var p0 = Vector2.zero;
-                                var p1 = new Vector2(size.x, 0);
-                                var p2 = new Vector2(0, size.z);
-                                var s = Math.Min(size.x, size.z);
-                                if ((x + z + 1) <= s)
-                                //if (ProceduralBlocksMod.PointInTriangle(p, p0, p1, p2))
+                                if (ProceduralBlocksMod.PointInRectangleTriangle(x + 0.5f, z + 0.5f, size.x, size.z))
                                     aps.Add(new Vector3(x, -0.5f, z));
                             }
                             if (z == 0)
                             {
-                                var p = new Vector2(x, y);
-                                var p0 = Vector2.zero;
-                                var p1 = new Vector2(size.x, 0);
-                                var p2 = new Vector2(0, size.y);
-                                var s = Math.Min(size.x, size.y);
-                                if ((x + y + 1) <= s)
-                                //if (ProceduralBlocksMod.PointInTriangle(p, p0, p1, p2))
+                                if (ProceduralBlocksMod.PointInRectangleTriangle(x + 0.5f, y + 0.5f, size.x, size.y))
                                     aps.Add(new Vector3(x, y, -0.5f));
                             }
                         }
@@ -73,35 +55,17 @@ namespace Exund.ProceduralBlocks
 
                             if (x == size.x - 1)
                             {
-                                var p = new Vector2(y, z);
-                                var p0 = Vector2.zero;
-                                var p1 = new Vector2(size.y, 0);
-                                var p2 = new Vector2(0, size.z);
-                                var s = Math.Min(size.y, size.z);
-                                if ((y + z + 1) <= s)
-                                //if (ProceduralBlocksMod.PointInTriangle(p, p0, p1, p2))
+                                if (ProceduralBlocksMod.PointInRectangleTriangle(y + 0.5f, z + 0.5f, size.y, size.z))
                                     aps.Add(new Vector3(x + 0.5f, y, z));
                             }
                             if (y == size.y - 1)
                             {
-                                var p = new Vector2(x, z);
-                                var p0 = Vector2.zero;
-                                var p1 = new Vector2(size.x, 0);
-                                var p2 = new Vector2(0, size.z);
-                                var s = Math.Min(size.x, size.z);
-                                if ((x + z + 1) <= s)
-                                //if (ProceduralBlocksMod.PointInTriangle(p, p0, p1, p2))
+                                if (ProceduralBlocksMod.PointInRectangleTriangle(x + 0.5f, z + 0.5f, size.x, size.z))
                                     aps.Add(new Vector3(x, y + 0.5f, z));
                             }
                             if (z == size.z - 1)
                             {
-                                var p = new Vector2(x, y);
-                                var p0 = Vector2.zero;
-                                var p1 = new Vector2(size.x, 0);
-                                var p2 = new Vector2(0, size.y);
-                                var s = Math.Min(size.x, size.y);
-                                if ((x + y + 1) <= s)
-                                //if (ProceduralBlocksMod.PointInTriangle(p, p0, p1, p2))
+                                if (ProceduralBlocksMod.PointInRectangleTriangle(x + 0.5f, y + 0.5f, size.x, size.y))
                                     aps.Add(new Vector3(x, y, z + 0.5f));
                             }
                         }

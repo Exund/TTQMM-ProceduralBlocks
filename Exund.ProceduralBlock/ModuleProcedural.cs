@@ -49,7 +49,7 @@ namespace Exund.ProceduralBlocks
             {Face.Back, true }
         };
 
-        internal bool inverted = false;
+        internal bool inverted;
 
         static ModuleProcedural()
         {
@@ -255,19 +255,19 @@ namespace Exund.ProceduralBlocks
                 {
                     object sblock = serializationBuffer.GetValue(i);
                     var bblock = (TankBlock)SpawnContext_block.GetValue(sblock);
+                    if (base.block != bblock) continue;
+
                     var blockSpecn = (TankPreset.BlockSpec?)SpawnContext_blockSpec.GetValue(sblock);
-                    if (blockSpecn == null) continue;
-                    var blockSpec = (TankPreset.BlockSpec)blockSpecn;
+                    if (!blockSpecn.HasValue) continue;
+
+                    var blockSpec = blockSpecn.Value;
                     if (blockSpec.saveState.Count == 0) continue;
+
                     var data = Module.SerialData<ModuleProcedural.SerialData>.Retrieve(blockSpec.saveState);
-                    
-                    if (base.block == bblock)
-                    { 
-                        this.faces = data.faces ?? this.faces;
-                        this.Size = data.size;
-                        this.inverted = data.inverted;
-                        break;
-                    }
+                    this.faces = data.faces ?? this.faces;
+                    this.Size = data.size;
+                    this.inverted = data.inverted;
+                    break;
                 }
             }
             catch (Exception e)
@@ -369,6 +369,8 @@ namespace Exund.ProceduralBlocks
             meshRenderer = base.block.GetComponentsInChildren<MeshRenderer>().FirstOrDefault(mr => mr.material.name.Contains("ProceduralMaterial"));
             meshFilter = base.block.GetComponentsInChildren<MeshFilter>().FirstOrDefault(mf => mf.sharedMesh.name == "ProceduralMesh");
             meshCollider = base.block.GetComponentsInChildren<MeshCollider>().FirstOrDefault(mf => mf.sharedMesh.name == "ProceduralMesh");
+
+            this.inverted = StringLookup.GetItemName(ObjectTypes.Block, (int)block.BlockType).ToLower().Contains("inside");
         }
 
         private void OnSpawn()
@@ -434,8 +436,7 @@ namespace Exund.ProceduralBlocks
             Left,
             Right,
             Front,
-            Back,
-            All
+            Back
         }
     }
 }
